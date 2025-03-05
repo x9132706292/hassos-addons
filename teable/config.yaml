@@ -17,14 +17,32 @@
         "share:rw"
     ],
     "options": {
-        "MYSQL_DATABASE": "nextcloud",
-        "MYSQL_USER": "nextcloud",
-        "MYSQL_PASSWORD": "",
-        "MYSQL_HOST": "addon_core_mariadb",
-        "NEXTCLOUD_ADMIN_USER": "hassio",
-        "NEXTCLOUD_ADMIN_PASSWORD": "",
-        "NEXTCLOUD_TRUSTED_DOMAINS": "homeassistant.local",
-        "TRUSTED_PROXIES": "127.0.0.1 172.30.33.0/24 192.168.1.1"
+        # replace the default password
+        "POSTGRES_PASSWORD: "replace_this_password"
+        "REDIS_PASSWORD": "replace_this_password"
+        "SECRET_KEY": "replace_this_secret_key"
+ 
+        # replace the following with a publicly accessible address
+        "PUBLIC_ORIGIN": "http://127.0.0.1:3000"
+        
+  
+        # Postgres
+        "POSTGRES_HOST": "localhost"
+        "POSTGRES_PORT": "5432"
+        "POSTGRES_DB": "teable"
+        "POSTGRES_USER": "teable"
+        "PUBLIC_DATABASE_PROXY": ""
+        
+        # Redis
+        "REDIS_HOST": "teable-cache"
+        "REDIS_PORT": "6379"
+        "REDIS_DB": "0"
+        
+        # App
+        "PRISMA_DATABASE_URL": "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}"
+        "BACKEND_CACHE_PROVIDER": "redis"
+        "BACKEND_CACHE_REDIS_URI": "redis://default:${REDIS_PASSWORD}@${REDIS_HOST}:${REDIS_PORT}/${REDIS_DB}"
+
     },
     "schema": {
     },
