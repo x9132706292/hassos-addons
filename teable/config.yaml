@@ -34,7 +34,7 @@
         "PUBLIC_DATABASE_PROXY": ""
         
         # Redis
-        "REDIS_HOST": "teable-cache"
+        "REDIS_HOST": "localhost"
         "REDIS_PORT": "6379"
         "REDIS_DB": "0"
         
