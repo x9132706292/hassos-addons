@@ -1,6 +1,4 @@
-{
-  "build_from": {
-    "aarch64": "ghcr.io/teableio/teable:latest",
-    "amd64": "ghcr.io/teableio/teable:latest",
-  }
-}
+---
+build_from:
+  aarch64: ghcr.io/teableio/teable:latest
+  amd64: ghcr.io/teableio/teable:latest
