@@ -1,36 +1,26 @@
 ---
-name: Teable
+name: Redis
 version: 1.0.1
-slug: teable
-description: "Home Assistant Add-on: teable"
-startup: services
-boot: auto
-webui: http://[HOST]:[PORT:3000]
-panel_icon: mdi:cloud-sync
-ports:
-  3000/tcp: 3000
-ports_description:
-  3000/tcp: Web interface
-map:
-  - share:rw
-options:
-  POSTGRES_PASSWORD: replace_this_password
-  REDIS_PASSWORD: replace_this_password
-  SECRET_KEY: replace_this_secret_key
-  PUBLIC_ORIGIN: http://127.0.0.1:3000
-  POSTGRES_HOST: localhost
-  POSTGRES_PORT: "5432"
-  POSTGRES_DB: teable
-  POSTGRES_USER: teable
-  PUBLIC_DATABASE_PROXY: ""
-  REDIS_HOST: localhost
-  REDIS_PORT: "6379"
-  REDIS_DB: "0"
-schema: {}
+slug: redis
+description: Redis-server
+uart: true
+url: https://github.com/x9132706292/hassio-addon-redis
+host_network: true
+before: before
 arch:
-  - aarch64
   - amd64
-  - armhf
   - armv7
   - i386
-image: ghcr.io/teableio/teable:latest
+boot: auto
+map:
+  - share:rw
+  - addons:rw
+  - ssl:ro
+ports:
+  6379/tcp: 6379
+ports_description:
+  6379/tcp: Web interface
+options:
+  REDIS_PASSWORD: ""
+schema:
+  REDIS_PASSWORD: password
