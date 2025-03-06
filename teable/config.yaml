@@ -1,5 +1,5 @@
 name: Teable
-version: dev
+version: 1.0.1
 slug: teable
 description: "Home Assistant Add-on: teable"
 startup: services
