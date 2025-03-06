@@ -23,4 +23,5 @@ until psql "$DATABASE_URL" -c '\q'; do
 done
 
 echo "Starting Teable Community Edition..."
-# Образ сам запускает приложение, поэтому команда не нужна
+# Запуск Teable
+exec node dist/main.js
