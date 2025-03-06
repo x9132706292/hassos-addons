@@ -1,18 +1,18 @@
 ARG BUILD_FROM=ghcr.io/home-assistant/amd64-base:latest
 FROM $BUILD_FROM
 
-# Установка зависимостей
+# Установка только postgresql-client (для проверки базы данных в run.sh)
 RUN apk add --no-cache \
-    nodejs \
-    npm \
     postgresql-client
 
-# Копирование исходного кода Teable
-WORKDIR /app
-RUN npm install -g @teable/cli
-COPY run.sh /app/run.sh
+# Копирование официального образа Teable
+FROM ghcr.io/teableio/teable:latest
 
-# Установка прав на выполнение
+# Установка рабочей директории
+WORKDIR /app
+
+# Копирование run.sh
+COPY run.sh /app/run.sh
 RUN chmod +x /app/run.sh
 
 # Запуск
