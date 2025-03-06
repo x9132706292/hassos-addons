@@ -16,7 +16,7 @@ ports:
 ports_description:
   "3000/tcp": "Web interface for Teable"
 options:
-  database_url: "postgres://teable:teable@db:5432/teable"
+  database_url: "postgres://teable:teable@77b2833f-timescaledb:5432/teable"
   public_origin: "http://localhost:3000"  # Значение по умолчанию
 schema:
   database_url: str
