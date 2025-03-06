@@ -4,7 +4,7 @@ version: 1.0.1
 slug: redis
 description: Redis-server
 uart: true
-url: https://github.com/x9132706292/hassio-addon-redis
+url: https://github.com/x9132706292/hassos-addon-teable
 host_network: true
 before: before
 arch:
