@@ -1,22 +1,19 @@
-# Используем официальный образ teable как базовый
-FROM ghcr.io/teableio/teable:latest
+ARG BUILD_FROM=ghcr.io/home-assistant/amd64-base:latest
+FROM $BUILD_FROM
 
-# Устанавливаем переменные окружения
-ENV NEXT_ENV_IMAGES_ALL_REMOTE=true
+# Установка зависимостей
+RUN apk add --no-cache \
+    nodejs \
+    npm \
+    postgresql-client
 
-# Копируем файл .env (предполагается, что он есть в директории сборки)
-# COPY .env /app/.env
+# Копирование исходного кода Teable
+WORKDIR /app
+RUN npm install -g @teable/cli
+COPY run.sh /app/run.sh
 
-# Указываем порт, который будет открыт
-EXPOSE 3000
+# Установка прав на выполнение
+RUN chmod +x /app/run.sh
 
-# Настраиваем том для данных
-VOLUME /app/.assets
-
-# Команда для запуска приложения (по умолчанию наследуется из базового образа)
-# Если требуется что-то специфическое, можно указать явно, например:
-# CMD ["npm", "start"]
-
-# Настройка healthcheck
-HEALTHCHECK --start-period=5s --interval=5s --timeout=3s --retries=3 \
-  CMD curl -f http://localhost:3000/health || exit 1
+# Запуск
+CMD ["/app/run.sh"]
