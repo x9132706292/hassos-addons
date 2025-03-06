@@ -1,27 +1,24 @@
----
-name: Teable
-version: 1.0.1
-slug: teable
-description: "Home Assistant Add-on: teable"
-uart: true
-url: https://github.com/x9132706292/hassos-addon-teable
-panel_icon: mdi:file-table-box-outline
-host_network: true
-before: before
+name: "Teable Community Edition"
+version: "1.0.0"
+slug: "teable"
+description: "Teable Community Edition - A no-code database running in Home Assistant"
 arch:
+  - aarch64
   - amd64
+  - armhf
   - armv7
   - i386
-boot: auto
-map:
-  - share:rw
-  - addons:rw
-  - ssl:ro
+url: "https://github.com/yourusername/ha-teable-addon"
+startup: "application"
+boot: "auto"
 ports:
   3000/tcp: 3000
 ports_description:
-  3000/tcp: Web interface
+  3000/tcp: "Web interface for Teable"
 options:
-  REDIS_PASSWORD: ""
-schema:
-  REDIS_PASSWORD: password
+  database_url: "postgres://teable:teable@db:5432/teable"
+schema: "public"
+map:
+  - "config:rw"
+environment:
+  DATABASE_URL: "{{ .options.database_url }}"
