@@ -11,6 +11,8 @@ arch:
 url: "https://github.com/x9132706292/hassos-addon-teable"
 startup: "application"
 boot: "auto"
+panel_icon: mdi:alpha-t-box-outline
+panel_title: Teable
 ports:
   "3000/tcp": 3000
 ports_description:
@@ -25,3 +27,4 @@ ingress: true
 ingress_port: 3000  
 map:
   - "config:rw"
+uart: true
