@@ -8,16 +8,21 @@ arch:
   - armhf
   - armv7
   - i386
-url: "https://github.com/x9132706292/hassos-addon-teable/"
+url: "https://github.com/x9132706292/hassos-addon-teable"
 startup: "application"
 boot: "auto"
 ports:
-  3000/tcp: 3000
+  "3000/tcp": 3000
 ports_description:
-  3000/tcp: "Web interface for Teable"
+  "3000/tcp": "Web interface for Teable"
 options:
   database_url: "postgres://teable:teable@db:5432/teable"
+  public_origin: "http://localhost:3000"  # Значение по умолчанию
+shema:
+  database_url: str
+  public_origin: str
 map:
   - "config:rw"
 environment:
   DATABASE_URL: "{{ .options.database_url }}"
+  PUBLIC_ORIGIN: "{{ .options.public_origin }}"
