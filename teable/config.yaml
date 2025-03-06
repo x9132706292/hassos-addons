@@ -25,6 +25,3 @@ ingress: true
 ingress_port: 3000  
 map:
   - "config:rw"
-environment:
-  DATABASE_URL: "{{ .options.database_url }}"
-  PUBLIC_ORIGIN: "{{ .options.public_origin }}"
