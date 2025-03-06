@@ -1,10 +1,11 @@
 ---
-name: Redis
+name: Teable
 version: 1.0.1
-slug: redis
-description: Redis-server
+slug: teable
+description: Home Assistant Add-on: teable
 uart: true
 url: https://github.com/x9132706292/hassos-addon-teable
+panel_icon: mdi:file-table-box-outline
 host_network: true
 before: before
 arch:
@@ -17,9 +18,9 @@ map:
   - addons:rw
   - ssl:ro
 ports:
-  6379/tcp: 6379
+  3000/tcp: 3000
 ports_description:
-  6379/tcp: Web interface
+  3000/tcp: Web interface
 options:
   REDIS_PASSWORD: ""
 schema:
