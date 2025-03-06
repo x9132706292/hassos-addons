@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-if [ -z "$DATABASE_URL" ]; then
+if [ -z "$database_url" ]; then
   echo "Error: DATABASE_URL is not set. Please configure it in the addon options."
   exit 1
 fi
@@ -11,10 +11,10 @@ if [ -z "$PUBLIC_ORIGIN" ]; then
   exit 1
 fi
 
-echo "DATABASE_URL: $DATABASE_URL"
+echo "DATABASE_URL: $database_url"
 echo "PUBLIC_ORIGIN: $PUBLIC_ORIGIN"
 
-until psql "$DATABASE_URL" -c '\q'; do
+until psql "$database_url" -c '\q'; do
   echo "Waiting for PostgreSQL to be ready..."
   sleep 2
 done
