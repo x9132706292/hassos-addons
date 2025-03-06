@@ -9,9 +9,12 @@ fi
 
 # Проверка PUBLIC_ORIGIN
 if [ -z "$PUBLIC_ORIGIN" ]; then
-  echo "Error: PUBLIC_ORIGIN is not set. Please configure it in the addon options (e.g., http://your-ha-ip:3000)."
+  echo "Error: PUBLIC_ORIGIN is not set. Please configure it in the addon options (e.g., http://your-ha-ip:3002)."
   exit 1
 fi
+
+echo "DATABASE_URL: $DATABASE_URL"
+echo "PUBLIC_ORIGIN: $PUBLIC_ORIGIN"
 
 # Ожидание PostgreSQL
 until psql "$DATABASE_URL" -c '\q'; do
@@ -20,6 +23,4 @@ until psql "$DATABASE_URL" -c '\q'; do
 done
 
 echo "Starting Teable Community Edition..."
-# Предполагаем, что образ сам запускает приложение
-# Если требуется конкретная команда, укажите её здесь, например:
-# exec node dist/main.js
+# Образ сам запускает приложение, поэтому команда не нужна
