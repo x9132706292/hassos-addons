@@ -17,7 +17,6 @@ ports_description:
   3000/tcp: "Web interface for Teable"
 options:
   database_url: "postgres://teable:teable@db:5432/teable"
-schema: "public"
 map:
   - "config:rw"
 environment:
