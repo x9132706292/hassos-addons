@@ -21,6 +21,8 @@ options:
 shema:
   database_url: str
   public_origin: str
+ingress: true
+ingress_port: 3000  
 map:
   - "config:rw"
 environment:
