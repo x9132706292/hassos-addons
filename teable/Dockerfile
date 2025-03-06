@@ -8,7 +8,7 @@ ENV NEXT_ENV_IMAGES_ALL_REMOTE=true
 COPY .env /app/.env
 
 # Указываем порт, который будет открыт
-EXPOSE ${PORT}
+EXPOSE 3000
 
 # Настраиваем том для данных
 VOLUME /app/.assets
@@ -19,4 +19,4 @@ VOLUME /app/.assets
 
 # Настройка healthcheck
 HEALTHCHECK --start-period=5s --interval=5s --timeout=3s --retries=3 \
-  CMD curl -f http://localhost:${PORT}/health || exit 1
+  CMD curl -f http://localhost:3000/health || exit 1
