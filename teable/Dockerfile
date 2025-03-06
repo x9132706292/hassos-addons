@@ -5,7 +5,7 @@ FROM ghcr.io/teableio/teable:latest
 ENV NEXT_ENV_IMAGES_ALL_REMOTE=true
 
 # Копируем файл .env (предполагается, что он есть в директории сборки)
-COPY .env /app/.env
+# COPY .env /app/.env
 
 # Указываем порт, который будет открыт
 EXPOSE 3000
