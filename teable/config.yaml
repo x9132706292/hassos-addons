@@ -5,7 +5,6 @@ slug: teable
 description: Home Assistant Add-on: teable
 uart: true
 url: https://github.com/x9132706292/hassos-addon-teable
-panel_icon: mdi:file-table-box-outline
 host_network: true
 before: before
 arch:
