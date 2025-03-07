@@ -1,16 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-# Проверяем оба возможных пути
-if [ -f "/data/options.yaml" ]; then
-  CONFIG_PATH=/data/options.yaml
-elif [ -f "/data/options.json" ]; then
-  CONFIG_PATH=/data/options.json
-else
-  echo "Error: No config file found at /data/options.yaml or /data/options.json."
-  ls -la /data 2>/dev/null || echo "Directory /data not mounted."
-  exit 1
-fi
+CONFIG_PATH=/data/options.json
 
 # Извлекаем значения с помощью jq
 DATABASE_URL=$(jq --raw-output '.database_url // empty' "$CONFIG_PATH")
@@ -40,5 +31,20 @@ done
 
 echo "PostgreSQL is ready!"
 echo "Starting Teable Community Edition..."
+
+# Экспортируем переменные
 export DATABASE_URL
 export PUBLIC_ORIGIN
+
+# Отладка: проверяем переменные
+echo "Environment variables before launch:"
+env | grep -E "DATABASE_URL|PUBLIC_ORIGIN"
+
+# Предполагаем, что Teable запускается через Next.js
+# Пробуем запустить приложение
+if [ -f "/app/apps/nestjs-backend/dist/index.js" ]; then
+  exec node /app/apps/nestjs-backend/dist/index.js
+else
+  echo "Error: Cannot find main application file. Please check image structure."
+  exit 1
+fi
