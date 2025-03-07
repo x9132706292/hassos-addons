@@ -28,3 +28,6 @@ ingress_port: 3000
 map:
   - "config:rw"
 uart: true
+environment:
+  DATABASE_URL: "$(bashio::config 'database_url')"
+  PUBLIC_ORIGIN: "$(bashio::config 'public_origin') "
