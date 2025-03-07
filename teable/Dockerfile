@@ -2,6 +2,7 @@ FROM ghcr.io/teableio/teable:latest
 
 # Установка postgresql-client для Debian
 RUN apt-get update && apt-get install -y \
+    jq \
     postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
