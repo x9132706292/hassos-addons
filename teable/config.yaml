@@ -14,11 +14,7 @@ options:
   prisma_database_url: "postgres://teable:teable@77b2833f-timescaledb:5432/teable"
   public_origin: "http://127.0.0.1:3000"
 schema:
-  prisma_database_url:
-    type: str
-    required: true
-  public_origin:
-    type: str
-    required: true
+  prisma_database_url: str
+  public_origin: str
 ports:
   "3000/tcp": 3000
