@@ -23,24 +23,11 @@ map:
   - "config:rw"
 uart: true
 options:
-  schema:
-    type: object
-    required:
-      - database_url
-      - public_origin
-    properties:
-      database_url:
-        type: string
-        title: Database URL
-        pattern: ^postgres:\/\/.+@.+:.+/.+$
-        default: postgres://teable:teable@77b2833f-timescaledb:5432/teable
-        description: URL for the database connection
-      public_origin:
-        type: string
-        title: Public Origin
-        default: http://localhost:3000
-        format: uri
-        description: Public URL for the application
+  database_url: "postgres://teable:teable@core_postgres:5432/teable"
+  public_origin: "http://192.168.1.100:3002"
+schema:
+  database_url: str
+  public_origin: str
 environment:
   DATABASE_URL: ${options.database_url}
   PUBLIC_ORIGIN: ${options.public_origin}
