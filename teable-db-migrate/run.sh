@@ -13,7 +13,7 @@ else
 fi
 
 # Извлекаем PRISMA_DATABASE_URL
-PRISMA_DATABASE_URL=$(jq --raw-output '.database_url // empty' "$CONFIG_PATH")
+PRISMA_DATABASE_URL=$(jq --raw-output '.prisma_database_url // empty' "$CONFIG_PATH")
 
 if [ -z "$PRISMA_DATABASE_URL" ]; then
     echo "Error: PRISMA_DATABASE_URL is not set in $CONFIG_PATH."
