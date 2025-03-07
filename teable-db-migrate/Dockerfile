@@ -1,10 +1,11 @@
-FROM ghcr.io/teableio/teable-db-migrate:latest
+FROM ghcr.io/teableio/teable-db-migrate-ee:latest
 
-# Устанавливаем jq для парсинга конфигурации
+# Устанавливаем jq, postgresql-client, zx и prisma
 RUN apt-get update && apt-get install -y \
-    postgresql-client \
     jq \
-    && rm -rf /var/lib/apt/lists/*
+    postgresql-client \
+    && rm -rf /var/lib/apt/lists/* \
+    && npm install -g zx prisma@6.2.1
 
 WORKDIR /prisma
 
