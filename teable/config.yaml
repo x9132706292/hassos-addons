@@ -30,4 +30,4 @@ map:
 uart: true
 environment:
   DATABASE_URL: "{{ .database_url }}"
-  PUBLIC_ORIGIN: "{{ $public_origin }}"
+  PUBLIC_ORIGIN: "${public_origin}"
