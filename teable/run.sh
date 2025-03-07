@@ -28,6 +28,7 @@ if [ -z "$PUBLIC_ORIGIN" ]; then
   exit 1
 fi
 
+echo "CONFIG_PATH: $CONFIG_PATH"
 echo "DATABASE_URL: $DATABASE_URL"
 echo "PUBLIC_ORIGIN: $PUBLIC_ORIGIN"
 
