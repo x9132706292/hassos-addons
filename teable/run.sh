@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-CONFIG_PATH=/data/options.json
+CONFIG_PATH=/data/options.yaml
 
 DATABASE_URL=$(jq --raw-output '.database_url // empty' $CONFIG_PATH)
 PUBLIC_ORIGIN=$(jq --raw-output '.public_origin // empty' $CONFIG_PATH)
