@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 set -e
 
-# Указываем путь к файлу конфигурации
-CONFIG_PATH=/data/options.yaml
-
-# Проверка существования файла
-if [ ! -f "$CONFIG_PATH" ]; then
-  echo "Error: Config file $CONFIG_PATH not found."
+# Проверяем оба возможных пути
+if [ -f "/data/options.yaml" ]; then
+  CONFIG_PATH=/data/options.yaml
+elif [ -f "/data/options.json" ]; then
+  CONFIG_PATH=/data/options.json
+else
+  echo "Error: No config file found at /data/options.yaml or /data/options.json."
   ls -la /data 2>/dev/null || echo "Directory /data not mounted."
   exit 1
 fi
@@ -17,13 +18,13 @@ PUBLIC_ORIGIN=$(jq --raw-output '.public_origin // empty' "$CONFIG_PATH")
 
 # Проверка DATABASE_URL
 if [ -z "$DATABASE_URL" ]; then
-  echo "Error: DATABASE_URL is not set in options.yaml."
+  echo "Error: DATABASE_URL is not set in $CONFIG_PATH."
   exit 1
 fi
 
 # Проверка PUBLIC_ORIGIN
 if [ -z "$PUBLIC_ORIGIN" ]; then
-  echo "Error: PUBLIC_ORIGIN is not set in options.yaml (e.g., http://your-ha-ip:3002)."
+  echo "Error: PUBLIC_ORIGIN is not set in $CONFIG_PATH (e.g., http://your-ha-ip:3002)."
   exit 1
 fi
 
