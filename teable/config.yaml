@@ -28,6 +28,3 @@ ingress_port: 3000
 map:
   - "config:rw"
 uart: true
-environment:
-  DATABASE_URL: "postgres://teable:teable@77b2833f-timescaledb:5432/teable"
-  PUBLIC_ORIGIN: "http://localhost:3000"
