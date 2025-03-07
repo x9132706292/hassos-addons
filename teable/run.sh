@@ -1,7 +1,16 @@
 #!/usr/bin/env bash
 set -e
 
-CONFIG_PATH=/data/options.json
+# Проверяем оба возможных пути
+if [ -f "/data/options.yaml" ]; then
+  CONFIG_PATH=/data/options.yaml
+elif [ -f "/data/options.json" ]; then
+  CONFIG_PATH=/data/options.json
+else
+  echo "Error: No config file found at /data/options.yaml or /data/options.json."
+  ls -la /data 2>/dev/null || echo "Directory /data not mounted."
+  exit 1
+fi
 
 # Извлекаем значения с помощью jq
 DATABASE_URL=$(jq --raw-output '.database_url // empty' "$CONFIG_PATH")
@@ -22,24 +31,14 @@ fi
 echo "DATABASE_URL: $DATABASE_URL"
 echo "PUBLIC_ORIGIN: $PUBLIC_ORIGIN"
 
-# Проверка доступности PostgreSQL с выводом ошибок
+# Проверка доступности PostgreSQL
 echo "Testing PostgreSQL connection..."
-until psql "$DATABASE_URL" -c '\q'; do
-  echo "Waiting for PostgreSQL to be ready... (Error: $(psql "$DATABASE_URL" -c '\q' 2>&1))"
+until psql "$DATABASE_URL" -c '\q' 2>/dev/null; do
+  echo "Waiting for PostgreSQL to be ready..."
   sleep 2
 done
 
 echo "PostgreSQL is ready!"
 echo "Starting Teable Community Edition..."
-# Не указываем явный запуск, полагаемся на встроенную точку входа образа
 export DATABASE_URL
 export PUBLIC_ORIGIN
-
-# Отладка: показываем, что передаём в exec
-echo "Executing default command: $@"
-if [ -z "$@" ]; then
-  echo "No default command provided by image. Trying 'next start' as fallback..."
-  exec npm run start
-else
-  exec "$@"
-fi
