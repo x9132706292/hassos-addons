@@ -1,16 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-# Проверяем оба возможных пути
-if [ -f "/data/options.yaml" ]; then
-  CONFIG_PATH=/data/options.yaml
-elif [ -f "/data/options.json" ]; then
-  CONFIG_PATH=/data/options.json
-else
-  echo "Error: No config file found at /data/options.yaml or /data/options.json."
-  ls -la /data 2>/dev/null || echo "Directory /data not mounted."
-  exit 1
-fi
+CONFIG_PATH=/data/options.json
 
 # Извлекаем значения с помощью jq
 DATABASE_URL=$(jq --raw-output '.database_url // empty' "$CONFIG_PATH")
@@ -28,7 +19,6 @@ if [ -z "$PUBLIC_ORIGIN" ]; then
   exit 1
 fi
 
-echo "CONFIG_PATH: $CONFIG_PATH"
 echo "DATABASE_URL: $DATABASE_URL"
 echo "PUBLIC_ORIGIN: $PUBLIC_ORIGIN"
 
