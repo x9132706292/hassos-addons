@@ -34,5 +34,12 @@ echo "Starting Teable Community Edition..."
 # Не указываем явный запуск, полагаемся на встроенную точку входа образа
 export DATABASE_URL
 export PUBLIC_ORIGIN
-# Запускаем стандартную команду образа (если она есть)
-exec "$@"
+
+# Отладка: показываем, что передаём в exec
+echo "Executing default command: $@"
+if [ -z "$@" ]; then
+  echo "No default command provided by image. Trying 'next start' as fallback..."
+  exec npm run start
+else
+  exec "$@"
+fi
