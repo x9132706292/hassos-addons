@@ -1,0 +1,17 @@
+name: "Teable Migration"
+version: "1.0.0"
+slug: "teable_migration"
+description: "One-time migration tool for Teable database"
+arch:
+  - aarch64
+  - amd64
+  - armhf
+  - armv7
+  - i386
+startup: "once"
+boot: "manual"
+options:
+  prisma_database_url: "postgres://teable:teable@77b2833f-timescaledb:5432/teable"
+schema:
+  prisma_database_url: str
+ports: {}
