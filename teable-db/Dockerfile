@@ -2,6 +2,7 @@ FROM ghcr.io/teableio/teable-db-migrate-ee:latest
 
 # Устанавливаем jq для парсинга конфигурации
 RUN apt-get update && apt-get install -y \
+    postgresql-client \
     jq \
     && rm -rf /var/lib/apt/lists/*
 
