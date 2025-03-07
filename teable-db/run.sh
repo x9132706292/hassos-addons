@@ -1,19 +1,10 @@
 #!/usr/bin/env bash
 set -e
 
-# Проверяем наличие конфигурационного файла
-if [ -f "/data/options.yaml" ]; then
-    CONFIG_PATH=/data/options.yaml
-elif [ -f "/data/options.json" ]; then
-    CONFIG_PATH=/data/options.json
-else
-    echo "Error: No config file found at /data/options.yaml or /data/options.json."
-    ls -la /data 2>/dev/null || echo "Directory /data not mounted."
-    exit 1
-fi
+CONFIG_PATH=/data/options.json
 
 # Извлекаем PRISMA_DATABASE_URL
-PRISMA_DATABASE_URL=$(jq --raw-output '.database_url // empty' "$CONFIG_PATH")
+PRISMA_DATABASE_URL=$(jq --raw-output '.prisma_database_url // empty' "$CONFIG_PATH")
 
 if [ -z "$PRISMA_DATABASE_URL" ]; then
     echo "Error: PRISMA_DATABASE_URL is not set in $CONFIG_PATH."
