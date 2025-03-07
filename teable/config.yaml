@@ -11,10 +11,10 @@ arch:
 startup: "application"
 boot: "auto"
 options:
-  database_url: "postgres://teable:teable@77b2833f-timescaledb:5432/teable"
+  prisma_database_url: "postgres://teable:teable@77b2833f-timescaledb:5432/teable"
   public_origin: "http://127.0.0.1:3000"
 schema:
-  database_url:
+  prisma_database_url:
     type: str
     required: true
   public_origin:
