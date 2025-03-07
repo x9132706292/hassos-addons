@@ -14,6 +14,6 @@ options:
   prisma_database_url: "postgres://teable:teable@77b2833f-timescaledb:5432/teable"
 schema:
   prisma_database_url:
-    type: string
+    type: str
     required: true
 ports: {}
