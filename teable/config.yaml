@@ -15,10 +15,10 @@ options:
   public_origin: "http://127.0.0.1:3000"
 schema:
   database_url:
-    type: string
+    type: str
     required: true
   public_origin:
-    type: string
+    type: str
     required: true
 ports:
   "3000/tcp": 3000
