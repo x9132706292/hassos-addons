@@ -1,7 +1,7 @@
-name: "Teable Migration"
+name: "Teable "
 version: "1.0.0"
-slug: "teable_migration"
-description: "One-time migration tool for Teable database"
+slug: "teable_db"
+description: ""
 arch:
   - aarch64
   - amd64
