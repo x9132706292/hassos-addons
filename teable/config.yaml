@@ -29,5 +29,5 @@ map:
   - "config:rw"
 uart: true
 environment:
-  DATABASE_URL: "$(bashio::config 'database_url')"
-  PUBLIC_ORIGIN: "$(bashio::config 'public_origin') "
+  DATABASE_URL: "{{ .database_url }}"
+  PUBLIC_ORIGIN: "{{ $public_origin }}"
