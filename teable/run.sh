@@ -31,12 +31,14 @@ fi
 echo "DATABASE_URL: $DATABASE_URL"
 echo "PUBLIC_ORIGIN: $PUBLIC_ORIGIN"
 
-# Ожидание PostgreSQL
-until psql "$DATABASE_URL" -c '\q' 2>/dev/null; do
-  echo "Waiting for PostgreSQL to be ready..."
+# Проверка доступности PostgreSQL с выводом ошибок
+echo "Testing PostgreSQL connection..."
+until psql "$DATABASE_URL" -c '\q'; do
+  echo "Waiting for PostgreSQL to be ready... (Error: $(psql "$DATABASE_URL" -c '\q' 2>&1))"
   sleep 2
 done
 
+echo "PostgreSQL is ready!"
 echo "Starting Teable Community Edition..."
 export DATABASE_URL
 export PUBLIC_ORIGIN
