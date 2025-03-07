@@ -1,6 +1,6 @@
 name: "Teable "
 version: "1.0.0"
-slug: "teable_db"
+slug: "teable-db"
 description: ""
 arch:
   - aarch64
