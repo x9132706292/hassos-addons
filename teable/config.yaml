@@ -17,17 +17,30 @@ ports:
   "3000/tcp": 3000
 ports_description:
   "3000/tcp": "Web interface for Teable"
-options:
-  database_url: "postgres://teable:teable@77b2833f-timescaledb:5432/teable"
-  public_origin: "http://localhost:3000"  # Значение по умолчанию
-schema:
-  database_url: str
-  public_origin: str
 ingress: true
 ingress_port: 3000  
 map:
   - "config:rw"
 uart: true
+options:
+  schema:
+    type: object
+    required:
+      - database_url
+      - public_origin
+    properties:
+      database_url:
+        type: string
+        title: Database URL
+        pattern: ^postgres:\/\/.+@.+:.+/.+$
+        default: postgres://teable:teable@77b2833f-timescaledb:5432/teable
+        description: URL for the database connection
+      public_origin:
+        type: string
+        title: Public Origin
+        default: http://localhost:3000
+        format: uri
+        description: Public URL for the application
 environment:
   DATABASE_URL: ${options.database_url}
   PUBLIC_ORIGIN: ${options.public_origin}
