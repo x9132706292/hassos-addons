@@ -31,6 +31,8 @@ done
 
 echo "PostgreSQL is ready!"
 echo "Starting Teable Community Edition..."
+# Не указываем явный запуск, полагаемся на встроенную точку входа образа
 export DATABASE_URL
 export PUBLIC_ORIGIN
-exec node dist/main.js
+# Запускаем стандартную команду образа (если она есть)
+exec "$@"
