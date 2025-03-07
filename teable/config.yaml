@@ -24,7 +24,7 @@ map:
 uart: true
 options:
   database_url: "postgres://teable:teable@77b2833f-timescaledb:5432/teable"
-  public_origin: "http://12.0.0.1:3000"
+  public_origin: "http://127.0.0.1:3000"
 schema:
   database_url: str
   public_origin: str
