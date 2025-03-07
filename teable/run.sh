@@ -1,5 +1,8 @@
-#!/usr/bin/env bash
+#!/usr/bin/env bashio
 set -e
+
+DATABASE_URL = $(bashio::config 'database_url')
+PUBLIC_ORIGIN = $(bashio::config 'public_origin')
 
 if [ -z $DATABASE_URL ]; then
   echo "Error: DATABASE_URL is not set. Please configure it in the addon options."
