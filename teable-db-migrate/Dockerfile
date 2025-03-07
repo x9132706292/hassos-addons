@@ -1,4 +1,4 @@
-FROM ghcr.io/teableio/teable-db-migrate-ee:latest
+FROM ghcr.io/teableio/teable-db-migrate:latest
 
 # Устанавливаем jq для парсинга конфигурации
 RUN apt-get update && apt-get install -y \
