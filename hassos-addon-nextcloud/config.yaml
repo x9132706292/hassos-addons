@@ -11,6 +11,8 @@ arch:
   - aarch64
   - i386
 startup: "service"
+panel_title: Nextcloud
+panel_icon: mdi:cloud-circle
 boot: "auto"
 ports:
   80/tcp: 8080         # Nextcloud работает на порту 80 внутри контейнера, мапим на 8080 снаружи
