@@ -12,19 +12,22 @@ arch:
 startup: "application"
 boot: "auto"
 ports:
-  80/tcp: 8080         # Nextcloud работает на порту 80 внутри контейнера, мапим на 8080 снаружи
+  80/tcp: 8080
 ports_description:
   80/tcp: "Web interface for Nextcloud"
-panel_title: Nextcloud
-panel_icon: mdi:cloud-circle  
-ingress: true
-ingress_port: 8080
-webui: "http://[HOST]:[PORT:8080]"
 map:
-  - share:rw          # Доступ к папке /share для хранения данных
+  - share:rw
 options:
-  admin_user: "nextcloud" # Имя администратора по умолчанию
-  admin_password: null # Пароль администратора (обязательно заполнить)
+  admin_user: "nextcloud"
+  admin_password: null
+  db_host: "77b2833f-timescaledb"
+  db_name: "nextcloud"
+  db_user: "nextcloud"
+  db_password: null
 schema:
-  admin_user: str
-  admin_password: password
+  admin_user: "str"
+  admin_password: "password"
+  db_host: "str"
+  db_name: "str"
+  db_user: "str"
+  db_password: "password"
