@@ -34,14 +34,19 @@ echo "[DEBUG] DB_PASSWORD=$DB_PASSWORD" >&2
 if [ ! -f "$NEXTCLOUD_DATA_DIR/config/config.php" ]; then
   echo "[INFO] Performing automated installation with PostgreSQL..."
 
-  # Проверяем наличие occ
-  if [ ! -f "/var/www/html/occ" ]; then
-    echo "[ERROR] occ file not found at /var/www/html/occ" >&2
+  # Ищем occ в образе
+  OCC_PATH=$(find /var/www/html -name occ 2>/dev/null | head -n 1)
+  if [ -z "$OCC_PATH" ]; then
+    echo "[ERROR] occ file not found in /var/www/html" >&2
     exit 1
   fi
+  echo "[DEBUG] Found occ at: $OCC_PATH"
 
-  # Устанавливаем рабочую директорию и запускаем установку
-  cd /var/www/html || exit 1
+  # Устанавливаем рабочую директорию на основе пути к occ
+  OCC_DIR=$(dirname "$OCC_PATH")
+  cd "$OCC_DIR" || exit 1
+
+  # Запускаем установку
   php occ maintenance:install \
     --admin-user="$NEXTCLOUD_ADMIN_USER" \
     --admin-pass="$NEXTCLOUD_ADMIN_PASSWORD" \
