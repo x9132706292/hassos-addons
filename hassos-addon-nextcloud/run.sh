@@ -19,7 +19,7 @@ chmod -R 770 "$NEXTCLOUD_DATA_DIR"
 # Проверяем, существует ли конфигурация
 CONFIG_FILE="$NEXTCLOUD_DATA_DIR/config/config.php"
 if [ ! -f "$CONFIG_FILE" ]; then
-  echo "[INFO] No config found. Please complete the setup via the web interface at http://<ip>:8080"
+  echo "[INFO] No config found. Please complete the setup via the web interface at http://<ip>:8080 or through Home Assistant Ingress"
 else
   echo "[INFO] Nextcloud config found, updating trusted domains if necessary..."
 
@@ -38,12 +38,21 @@ else
   # Обновляем trusted_domains через occ
   php occ config:system:set trusted_domains 0 --value="localhost"
   php occ config:system:set trusted_domains 1 --value="$(hostname -i):8080"
+  if [ -n "$HASSIO_TOKEN" ]; then
+    HA_DOMAIN=$(hostname -f)
+    php occ config:system:set trusted_domains 2 --value="$HA_DOMAIN"
+    echo "[INFO] Added Home Assistant domain ($HA_DOMAIN) to trusted domains for Ingress."
+  fi
   if [ $? -eq 0 ]; then
     echo "[INFO] Trusted domains updated successfully."
   else
     echo "[ERROR] Failed to update trusted domains." >&2
   fi
 fi
+
+# Даём время Apache запуститься перед ответом Ingress
+echo "[INFO] Starting Nextcloud, waiting for Apache to be ready..."
+sleep 10
 
 # Запускаем Nextcloud
 exec /entrypoint.sh apache2-foreground
