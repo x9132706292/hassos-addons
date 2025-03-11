@@ -1,10 +1,8 @@
 #!/bin/bash
 
-CONFIG_PATH=/data/options.json
-
 # Читаем настройки из /data/options.json
-ADMIN_USER=$(jq -r '.admin_user' "$CONFIG_PATH")
-ADMIN_PASSWORD=$(jq -r '.admin_password' "$CONFIG_PATH")
+ADMIN_USER=$(jq -r '.admin_user' /data/options.json)
+ADMIN_PASSWORD=$(jq -r '.admin_password' /data/options.json)
 
 # Проверяем, что пароль задан
 if [ -z "$ADMIN_PASSWORD" ]; then
@@ -18,8 +16,11 @@ export NEXTCLOUD_ADMIN_PASSWORD="$ADMIN_PASSWORD"
 export NEXTCLOUD_DATA_DIR="/share/nextcloud"
 export NEXTCLOUD_TRUSTED_DOMAINS="localhost $(hostname -i):8080"
 
-# Логируем запуск
-echo "[INFO] Starting Nextcloud with admin user: $ADMIN_USER"
+# Отладочный вывод
+echo "[DEBUG] NEXTCLOUD_ADMIN_USER=$NEXTCLOUD_ADMIN_USER"
+echo "[DEBUG] NEXTCLOUD_ADMIN_PASSWORD=$NEXTCLOUD_ADMIN_PASSWORD"
+echo "[DEBUG] NEXTCLOUD_DATA_DIR=$NEXTCLOUD_DATA_DIR"
+echo "[DEBUG] NEXTCLOUD_TRUSTED_DOMAINS=$NEXTCLOUD_TRUSTED_DOMAINS"
 
 # Запускаем Nextcloud
 exec /entrypoint.sh apache2-foreground
