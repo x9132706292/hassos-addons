@@ -2,7 +2,7 @@ name: "Nextcloud"
 version: "1.0.0"
 slug: "nextcloud"
 description: "A safe home for all your data with Nextcloud"
-url: "https://github.com/x9132706292/hassos-addons/tree/main/hassos-addon-nextcloud"
+url: "https://github.com/yourusername/hassio-addons/tree/main/nextcloud"
 arch:
   - amd64
   - armhf
@@ -18,9 +18,9 @@ ports_description:
 map:
   - share:rw
 options:
-  admin_user: "nextcloud"
+  admin_user: "admin"
   admin_password: null
-  db_host: "77b2833f-timescaledb"
+  db_host: "77b2833f-timescaledb:5432"
   db_name: "nextcloud"
   db_user: "nextcloud"
   db_password: null
