@@ -1,0 +1,28 @@
+---
+name: "Nextcloud"
+version: "1.0.0"
+slug: "nextcloud"
+description: "A safe home for all your data with Nextcloud"
+url: "https://github.com/yourusername/hassio-addons/tree/main/nextcloud"
+arch:
+  - amd64
+  - armhf
+  - armv7
+  - aarch64
+  - i386
+startup: "service"
+boot: "auto"
+ports:
+  80/tcp: 8080         # Nextcloud работает на порту 80 внутри контейнера, мапим на 8080 снаружи
+ports_description:
+  80/tcp: "Web interface for Nextcloud"
+map:
+  - share:rw          # Доступ к папке /share для хранения данных
+ingress: true
+ingress_port: 8099
+options:
+  admin_user: "admin" # Имя администратора по умолчанию
+  admin_password: null # Пароль администратора (обязательно заполнить)
+schema:
+  admin_user: "str"
+  admin_password: "password"
