@@ -34,10 +34,10 @@ echo "[DEBUG] DB_PASSWORD=$DB_PASSWORD" >&2
 if [ ! -f "$NEXTCLOUD_DATA_DIR/config/config.php" ]; then
   echo "[INFO] Performing automated installation with PostgreSQL..."
 
-  # Ищем occ в образе
-  OCC_PATH=$(find /var/www/html -name occ 2>/dev/null | head -n 1)
+  # Ищем occ в контейнере
+  OCC_PATH=$(find / -name occ 2>/dev/null | head -n 1)
   if [ -z "$OCC_PATH" ]; then
-    echo "[ERROR] occ file not found in /var/www/html" >&2
+    echo "[ERROR] occ file not found anywhere in the container" >&2
     exit 1
   fi
   echo "[DEBUG] Found occ at: $OCC_PATH"
