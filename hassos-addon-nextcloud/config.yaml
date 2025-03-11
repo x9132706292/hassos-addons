@@ -3,7 +3,7 @@ name: "Nextcloud"
 version: "1.0.0"
 slug: "nextcloud"
 description: "A safe home for all your data with Nextcloud"
-url: "https://github.com/yourusername/hassio-addons/tree/main/nextcloud"
+url: "https://github.com/x9132706292/hassos-addons/hassos-addon-nextcloud/"
 arch:
   - amd64
   - armhf
@@ -21,7 +21,7 @@ map:
 ingress: true
 ingress_port: 8099
 options:
-  admin_user: "admin" # Имя администратора по умолчанию
+  admin_user: "nextcloud" # Имя администратора по умолчанию
   admin_password: null # Пароль администратора (обязательно заполнить)
 schema:
   admin_user: str
