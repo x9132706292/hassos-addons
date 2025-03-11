@@ -33,8 +33,16 @@ echo "[DEBUG] DB_PASSWORD=$DB_PASSWORD" >&2
 # Проверяем, новая ли это установка
 if [ ! -f "$NEXTCLOUD_DATA_DIR/config/config.php" ]; then
   echo "[INFO] Performing automated installation with PostgreSQL..."
-  # Установка через CLI с PostgreSQL
-  php /var/www/html/occ maintenance:install \
+
+  # Проверяем наличие occ
+  if [ ! -f "/var/www/html/occ" ]; then
+    echo "[ERROR] occ file not found at /var/www/html/occ" >&2
+    exit 1
+  fi
+
+  # Устанавливаем рабочую директорию и запускаем установку
+  cd /var/www/html || exit 1
+  php occ maintenance:install \
     --admin-user="$NEXTCLOUD_ADMIN_USER" \
     --admin-pass="$NEXTCLOUD_ADMIN_PASSWORD" \
     --data-dir="$NEXTCLOUD_DATA_DIR" \
