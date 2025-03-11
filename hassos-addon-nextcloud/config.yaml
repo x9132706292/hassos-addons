@@ -18,7 +18,7 @@ ports_description:
 panel_title: Nextcloud
 panel_icon: mdi:cloud-circle  
 ingress: true
-ingress_port: 8099
+ingress_port: 8080
 webui: "http://[HOST]:[PORT:8080]"
 map:
   - share:rw          # Доступ к папке /share для хранения данных
