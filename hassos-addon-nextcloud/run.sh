@@ -30,6 +30,11 @@ echo "[DEBUG] DB_NAME=$DB_NAME" >&2
 echo "[DEBUG] DB_USER=$DB_USER"
 echo "[DEBUG] DB_PASSWORD=$DB_PASSWORD" >&2
 
+# Исправляем права на NEXTCLOUD_DATA_DIR
+echo "[INFO] Fixing permissions for $NEXTCLOUD_DATA_DIR..."
+chown -R www-data:www-data "$NEXTCLOUD_DATA_DIR"
+chmod -R 770 "$NEXTCLOUD_DATA_DIR"
+
 # Проверяем, новая ли это установка
 if [ ! -f "$NEXTCLOUD_DATA_DIR/config/config.php" ]; then
   echo "[INFO] Performing automated installation with PostgreSQL..."
