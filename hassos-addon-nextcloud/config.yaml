@@ -9,18 +9,19 @@ arch:
   - armv7
   - aarch64
   - i386
-startup: "service"
-panel_title: Nextcloud
-panel_icon: mdi:cloud-circle
+startup: "application"
 boot: "auto"
 ports:
   80/tcp: 8080         # Nextcloud работает на порту 80 внутри контейнера, мапим на 8080 снаружи
 ports_description:
   80/tcp: "Web interface for Nextcloud"
-map:
-  - share:rw          # Доступ к папке /share для хранения данных
+panel_title: Nextcloud
+panel_icon: mdi:cloud-circle  
 ingress: true
 ingress_port: 8099
+webui: "http://[HOST]:[PORT:8080]"
+map:
+  - share:rw          # Доступ к папке /share для хранения данных
 options:
   admin_user: "nextcloud" # Имя администратора по умолчанию
   admin_password: null # Пароль администратора (обязательно заполнить)
