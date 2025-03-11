@@ -1,24 +1,15 @@
 #!/bin/bash
 
-# Читаем настройки из /data/options.json (оставим только для доверенных доменов и данных)
-ADMIN_USER=$(jq -r '.admin_user' /data/options.json)
-ADMIN_PASSWORD=$(jq -r '.admin_password' /data/options.json)
-DB_HOST=$(jq -r '.db_host' /data/options.json)
-DB_NAME=$(jq -r '.db_name' /data/options.json)
-DB_USER=$(jq -r '.db_user' /data/options.json)
-DB_PASSWORD=$(jq -r '.db_password' /data/options.json)
+# Читаем настройки из /data/options.json
+TRUSTED_DOMAINS=$(jq -r '.trusted_domains' /data/options.json)
 
 # Устанавливаем переменные окружения для Nextcloud
 export NEXTCLOUD_DATA_DIR="/share/nextcloud"
-export NEXTCLOUD_TRUSTED_DOMAINS="localhost $(hostname -i):8080"
+export NEXTCLOUD_TRUSTED_DOMAINS="$TRUSTED_DOMAINS $(hostname -i):8080"
 
 # Отладочный вывод
 echo "[DEBUG] NEXTCLOUD_DATA_DIR=$NEXTCLOUD_DATA_DIR"
 echo "[DEBUG] NEXTCLOUD_TRUSTED_DOMAINS=$NEXTCLOUD_TRUSTED_DOMAINS" >&2
-echo "[DEBUG] DB_HOST=$DB_HOST"
-echo "[DEBUG] DB_NAME=$DB_NAME" >&2
-echo "[DEBUG] DB_USER=$DB_USER"
-echo "[DEBUG] DB_PASSWORD=$DB_PASSWORD" >&2
 
 # Исправляем права на NEXTCLOUD_DATA_DIR
 echo "[INFO] Fixing permissions for $NEXTCLOUD_DATA_DIR..."
@@ -26,10 +17,32 @@ chown -R www-data:www-data "$NEXTCLOUD_DATA_DIR"
 chmod -R 770 "$NEXTCLOUD_DATA_DIR"
 
 # Проверяем, существует ли конфигурация
-if [ ! -f "$NEXTCLOUD_DATA_DIR/config/config.php" ]; then
+CONFIG_FILE="$NEXTCLOUD_DATA_DIR/config/config.php"
+if [ ! -f "$CONFIG_FILE" ]; then
   echo "[INFO] No config found. Please complete the setup via the web interface at http://<ip>:8080"
 else
-  echo "[INFO] Nextcloud config found, starting the instance."
+  echo "[INFO] Nextcloud config found, updating trusted domains if necessary..."
+
+  # Ищем occ в контейнере
+  OCC_PATH=$(find / -name occ 2>/dev/null | head -n 1)
+  if [ -z "$OCC_PATH" ]; then
+    echo "[ERROR] occ file not found anywhere in the container" >&2
+    exit 1
+  fi
+  echo "[DEBUG] Found occ at: $OCC_PATH"
+
+  # Устанавливаем рабочую директорию
+  OCC_DIR=$(dirname "$OCC_PATH")
+  cd "$OCC_DIR" || exit 1
+
+  # Обновляем trusted_domains через occ
+  php occ config:system:set trusted_domains 0 --value="localhost"
+  php occ config:system:set trusted_domains 1 --value="$(hostname -i):8080"
+  if [ $? -eq 0 ]; then
+    echo "[INFO] Trusted domains updated successfully."
+  else
+    echo "[ERROR] Failed to update trusted domains." >&2
+  fi
 fi
 
 # Запускаем Nextcloud
