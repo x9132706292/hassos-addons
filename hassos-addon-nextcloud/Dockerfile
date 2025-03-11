@@ -8,7 +8,6 @@ RUN apk add --no-cache \
 
 # Копируем скрипт запуска
 COPY run.sh /run.sh
-RUN chmod +x /run.sh
 
 FROM nextcloud:latest
 
@@ -16,6 +15,7 @@ FROM nextcloud:latest
 COPY --from=builder /run.sh /run.sh
 COPY --from=builder /usr/bin/jq /usr/bin/jq
 COPY --from=builder /bin/bash /bin/bash
+RUN chmod +x /run.sh
 
 # Указываем точку входа
 ENTRYPOINT ["/run.sh"]
