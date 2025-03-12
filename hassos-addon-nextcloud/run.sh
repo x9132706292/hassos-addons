@@ -10,17 +10,27 @@ DATA_DIR="/share/nextcloud"
 echo "[DEBUG] DATA_DIR=$DATA_DIR"
 echo "[DEBUG] TRUSTED_DOMAINS=$TRUSTED_DOMAINS $(hostname -i):8080" >&2
 
+# Проверяем текущего владельца и права
+echo "[INFO] Checking current permissions for $DATA_DIR..."
+ls -ld "$DATA_DIR" >&2
+
 # Исправляем права на DATA_DIR
 echo "[INFO] Fixing permissions for $DATA_DIR..."
-chown -R www-data:www-data "$DATA_DIR"
-chmod -R 770 "$DATA_DIR"
+chown -R www-data:www-data "$DATA_DIR" || echo "[WARNING] Failed to change ownership, may require host-level fix" >&2
+chmod -R 770 "$DATA_DIR" || echo "[WARNING] Failed to change permissions, may require host-level fix" >&2
 
-# Проверяем, существует ли конфигурация
+# Проверяем права после исправления
+echo "[INFO] Permissions after fix:"
+ls -ld "$DATA_DIR" >&2
+
+# Проверяем наличие конфигурации
 CONFIG_FILE="$DATA_DIR/config/config.php"
 if [ ! -f "$CONFIG_FILE" ]; then
-  echo "[INFO] No config found. Please complete the setup via the web interface at http://<ip>:8080"
+  echo "[INFO] No config found at $CONFIG_FILE. Please complete the setup via the web interface at http://<ip>:8080"
 else
-  echo "[INFO] Nextcloud config found, updating trusted domains if necessary..."
+  echo "[INFO] Config found at $CONFIG_FILE, checking contents..."
+  ls -l "$CONFIG_FILE" >&2
+  cat "$CONFIG_FILE" >&2  # Выводим содержимое для отладки в stderr
 
   # Ищем occ в контейнере
   OCC_PATH=$(find / -name occ 2>/dev/null | head -n 1)
@@ -42,6 +52,9 @@ else
   else
     echo "[ERROR] Failed to update trusted domains." >&2
   fi
+
+  # Проверяем статус установки
+  php occ status >&2
 fi
 
 # Даём время Apache запуститься
