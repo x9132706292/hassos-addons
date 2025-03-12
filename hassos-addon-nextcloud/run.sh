@@ -9,7 +9,7 @@ DB_NAME="nextcloud"
 DB_USER="nextcloud"
 DB_PASSWORD="your_secure_password"  # Замени на свой пароль
 
-# Устанавливаем путь к данным вручную
+# Устанавливаем путь к данным
 DATA_DIR="/share/nextcloud"
 export NEXTCLOUD_DATA_DIR="$DATA_DIR"
 
@@ -17,18 +17,30 @@ export NEXTCLOUD_DATA_DIR="$DATA_DIR"
 echo "[DEBUG] DATA_DIR=$DATA_DIR"
 echo "[DEBUG] NEXTCLOUD_DATA_DIR=$NEXTCLOUD_DATA_DIR"
 echo "[DEBUG] TRUSTED_DOMAINS=$TRUSTED_DOMAINS $(hostname -i):8080" >&2
+echo "[DEBUG] ADMIN_USER=$ADMIN_USER" >&2
+echo "[DEBUG] DB_HOST=$DB_HOST" >&2
 
-# Исправляем права на DATA_DIR
+# Проверяем текущие права
+echo "[INFO] Checking current permissions for $DATA_DIR..."
+ls -ld "$DATA_DIR" >&2
+ls -l "$DATA_DIR" >&2
+
+# Исправляем права
 echo "[INFO] Fixing permissions for $DATA_DIR..."
 chown -R www-data:www-data "$DATA_DIR" || echo "[WARNING] Failed to change ownership" >&2
 chmod -R 770 "$DATA_DIR" || echo "[WARNING] Failed to change permissions" >&2
+
+# Проверяем права после исправления
+echo "[INFO] Permissions after fix:"
+ls -ld "$DATA_DIR" >&2
+ls -l "$DATA_DIR" >&2
 
 # Проверяем наличие конфигурации
 CONFIG_FILE="$DATA_DIR/config/config.php"
 if [ ! -f "$CONFIG_FILE" ]; then
   echo "[INFO] No config found at $CONFIG_FILE. Starting automated installation..."
 
-  # Ищем occ в контейнере
+  # Ищем occ
   OCC_PATH=$(find / -name occ 2>/dev/null | head -n 1)
   if [ -z "$OCC_PATH" ]; then
     echo "[ERROR] occ file not found" >&2
@@ -36,11 +48,9 @@ if [ ! -f "$CONFIG_FILE" ]; then
   fi
   echo "[DEBUG] Found occ at: $OCC_PATH"
 
-  # Устанавливаем рабочую директорию
-  OCC_DIR=$(dirname "$OCC_PATH")
-  cd "$OCC_DIR" || exit 1
+  cd "$(dirname "$OCC_PATH")" || exit 1
 
-  # Запускаем автоматическую установку
+  # Автоматическая установка
   php occ maintenance:install \
     --admin-user="$ADMIN_USER" \
     --admin-pass="$ADMIN_PASSWORD" \
