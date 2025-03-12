@@ -30,6 +30,11 @@ echo "[INFO] Fixing permissions for $DATA_DIR..."
 chown -R www-data:www-data "$DATA_DIR" || echo "[WARNING] Failed to change ownership" >&2
 chmod -R 770 "$DATA_DIR" || echo "[WARNING] Failed to change permissions" >&2
 
+# Создаём директорию config, если её нет
+mkdir -p "$DATA_DIR/config"
+chown www-data:www-data "$DATA_DIR/config"
+chmod 770 "$DATA_DIR/config"
+
 # Проверяем права после исправления
 echo "[INFO] Permissions after fix:"
 ls -ld "$DATA_DIR" >&2
@@ -50,7 +55,7 @@ if [ ! -f "$CONFIG_FILE" ]; then
 
   cd "$(dirname "$OCC_PATH")" || exit 1
 
-  # Автоматическая установка
+  # Автоматическая Установка с явным указанием директории
   php occ maintenance:install \
     --admin-user="$ADMIN_USER" \
     --admin-pass="$ADMIN_PASSWORD" \
@@ -62,6 +67,7 @@ if [ ! -f "$CONFIG_FILE" ]; then
     --database-pass="$DB_PASSWORD" >&2
   if [ $? -eq 0 ]; then
     echo "[INFO] Automated installation completed successfully."
+    ls -l "$DATA_DIR/config" >&2  # Проверяем, создался ли config.php
   else
     echo "[ERROR] Automated installation failed." >&2
     exit 1
