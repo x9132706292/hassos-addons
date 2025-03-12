@@ -22,8 +22,3 @@ options:
   trusted_domains: "localhost"
 schema:
   trusted_domains: "str"
-ingress: true
-ingress_port: 8099
-panel_icon: "mdi:cloud-circle"
-panel_title: "Nextcloud"
-panel_admin: false
