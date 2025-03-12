@@ -86,16 +86,5 @@ DROP DATABASE nextcloud;
 Then recreate it as described in step 3.
 - **TimescaleDB:** For a compatible PostgreSQL database, consider using the [TimescaleDB](https://github.com/hassio-addons/addon-timescaledb) add-on with host `77b2833f-timescaledb:5432`.
 
-## Troubleshooting
-- **Repeated Setup Prompt:**
-   - Ensure /share/nextcloud/config/config.php exists and has correct permissions (chown -R 33:33 /share/nextcloud).
-   - Verify database tables exist (\dt in psql).
-Database Connection Issues:
-Check your PostgreSQL settings and ensure the database is accessible.
-Web UI Not Working:
-Test direct access at http://<ip>:8080 and check logs for Apache startup.
-Credits
-Built on the official Nextcloud Docker image.
-Inspired by community efforts to integrate Nextcloud with Home Assistant.
-License
-MIT License. See LICENSE for details (if added to the repository).
+## License
+MIT License. See [LICENSE] for details.
