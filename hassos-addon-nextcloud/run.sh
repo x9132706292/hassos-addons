@@ -4,7 +4,8 @@
 TRUSTED_DOMAINS=$(jq -r '.trusted_domains' /data/options.json)
 ADMIN_USER=$(jq -r '.admin_user // "admin"' /data/options.json)
 ADMIN_PASSWORD=$(jq -r '.admin_password // "nextcloud"' /data/options.json)
-DB_HOST="77b2833f-timescaledb:5432"
+DB_HOST="77b2833f-timescaledb"
+DB_PORT="5432"
 DB_NAME="nextcloud"
 DB_USER="nextcloud"
 DB_PASSWORD="your_secure_password"  # Замени на свой пароль
@@ -13,7 +14,7 @@ DB_PASSWORD="your_secure_password"  # Замени на свой пароль
 DATA_DIR="/share/nextcloud"
 CONFIG_DIR="$DATA_DIR/config"
 export NEXTCLOUD_DATA_DIR="$DATA_DIR"
-export NEXTCLOUD_CONFIG_DIR="$CONFIG_DIR"  # Явно задаём директорию конфигурации
+export NEXTCLOUD_CONFIG_DIR="$CONFIG_DIR"
 
 # Отладочный вывод
 echo "[DEBUG] DATA_DIR=$DATA_DIR"
@@ -23,6 +24,7 @@ echo "[DEBUG] NEXTCLOUD_CONFIG_DIR=$NEXTCLOUD_CONFIG_DIR"
 echo "[DEBUG] TRUSTED_DOMAINS=$TRUSTED_DOMAINS $(hostname -i):8080" >&2
 echo "[DEBUG] ADMIN_USER=$ADMIN_USER" >&2
 echo "[DEBUG] DB_HOST=$DB_HOST" >&2
+echo "[DEBUG] DB_PORT=$DB_PORT" >&2
 echo "[DEBUG] DB_NAME=$DB_NAME" >&2
 echo "[DEBUG] DB_USER=$DB_USER" >&2
 
@@ -63,30 +65,29 @@ if [ ! -f "$CONFIG_FILE" ]; then
 
   # Проверяем подключение к базе
   echo "[INFO] Testing database connection..."
-  psql -h "$DB_HOST" -U "$DB_USER" -d "$DB_NAME" -c "SELECT 1;" >/dev/null 2>&1
+  PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -c "SELECT 1;" >/dev/null 2>&1
   if [ $? -eq 0 ]; then
     echo "[INFO] Database connection successful."
   else
-    echo "[ERROR] Failed to connect to database." >&2
+    echo "[ERROR] Failed to connect to database. Check DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, or database availability." >&2
     exit 1
   fi
 
-  # Автоматическая установка с явным указанием путей
+  # Автоматическая установка
   php occ maintenance:install \
     --admin-user="$ADMIN_USER" \
     --admin-pass="$ADMIN_PASSWORD" \
     --data-dir="$DATA_DIR" \
     --database="pgsql" \
     --database-host="$DB_HOST" \
+    --database-port="$DB_PORT" \
     --database-name="$DB_NAME" \
     --database-user="$DB_USER" \
     --database-pass="$DB_PASSWORD" >&2
   if [ $? -eq 0 ]; then
     echo "[INFO] Automated installation completed successfully."
-    # Проверяем, где создался config.php
     ls -l "$CONFIG_DIR" >&2
     ls -l /var/www/html/config >&2
-    # Если config.php в /var/www/html, перемещаем
     if [ -f "/var/www/html/config/config.php" ] && [ ! -f "$CONFIG_FILE" ]; then
       echo "[INFO] Moving config.php from /var/www/html to $CONFIG_DIR..."
       mv /var/www/html/config/* "$CONFIG_DIR/"
