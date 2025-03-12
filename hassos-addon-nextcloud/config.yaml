@@ -2,7 +2,7 @@ name: "Nextcloud"
 version: "1.0.0"
 slug: "nextcloud"
 description: "A safe home for all your data with Nextcloud"
-url: "https://github.com/x9132706292/hassos-addons/edit/main/hassos-addon-nextcloud/"
+url: "https://github.com/x9132706292/hassos-addons/tree/main/hassos-addon-nextcloud/"
 arch:
   - amd64
   - armhf
@@ -11,6 +11,7 @@ arch:
   - i386
 startup: "application"
 boot: "auto"
+webui: "http://[HOST]:[PORT:8080]"
 ports:
   80/tcp: 8080
 ports_description:
