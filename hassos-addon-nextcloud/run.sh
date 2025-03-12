@@ -19,6 +19,8 @@ echo "[DEBUG] NEXTCLOUD_DATA_DIR=$NEXTCLOUD_DATA_DIR"
 echo "[DEBUG] TRUSTED_DOMAINS=$TRUSTED_DOMAINS $(hostname -i):8080" >&2
 echo "[DEBUG] ADMIN_USER=$ADMIN_USER" >&2
 echo "[DEBUG] DB_HOST=$DB_HOST" >&2
+echo "[DEBUG] DB_NAME=$DB_NAME" >&2
+echo "[DEBUG] DB_USER=$DB_USER" >&2
 
 # Проверяем текущие права
 echo "[INFO] Checking current permissions for $DATA_DIR..."
@@ -30,7 +32,7 @@ echo "[INFO] Fixing permissions for $DATA_DIR..."
 chown -R www-data:www-data "$DATA_DIR" || echo "[WARNING] Failed to change ownership" >&2
 chmod -R 770 "$DATA_DIR" || echo "[WARNING] Failed to change permissions" >&2
 
-# Создаём директорию config, если её нет
+# Создаём директорию config
 mkdir -p "$DATA_DIR/config"
 chown www-data:www-data "$DATA_DIR/config"
 chmod 770 "$DATA_DIR/config"
@@ -55,7 +57,17 @@ if [ ! -f "$CONFIG_FILE" ]; then
 
   cd "$(dirname "$OCC_PATH")" || exit 1
 
-  # Автоматическая Установка с явным указанием директории
+  # Проверяем подключение к базе
+  echo "[INFO] Testing database connection..."
+  psql -h "$DB_HOST" -U "$DB_USER" -d "$DB_NAME" -c "SELECT 1;" >/dev/null 2>&1
+  if [ $? -eq 0 ]; then
+    echo "[INFO] Database connection successful."
+  else
+    echo "[ERROR] Failed to connect to database." >&2
+    exit 1
+  fi
+
+  # Автоматическая установка
   php occ maintenance:install \
     --admin-user="$ADMIN_USER" \
     --admin-pass="$ADMIN_PASSWORD" \
@@ -67,7 +79,7 @@ if [ ! -f "$CONFIG_FILE" ]; then
     --database-pass="$DB_PASSWORD" >&2
   if [ $? -eq 0 ]; then
     echo "[INFO] Automated installation completed successfully."
-    ls -l "$DATA_DIR/config" >&2  # Проверяем, создался ли config.php
+    ls -l "$DATA_DIR/config" >&2
   else
     echo "[ERROR] Automated installation failed." >&2
     exit 1
