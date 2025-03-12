@@ -5,9 +5,11 @@ TRUSTED_DOMAINS=$(jq -r '.trusted_domains' /data/options.json)
 
 # Устанавливаем путь к данным вручную
 DATA_DIR="/share/nextcloud"
+export NEXTCLOUD_DATA_DIR="$DATA_DIR"  # Явно задаём для Nextcloud
 
 # Отладочный вывод
 echo "[DEBUG] DATA_DIR=$DATA_DIR"
+echo "[DEBUG] NEXTCLOUD_DATA_DIR=$NEXTCLOUD_DATA_DIR"
 echo "[DEBUG] TRUSTED_DOMAINS=$TRUSTED_DOMAINS $(hostname -i):8080" >&2
 
 # Проверяем текущего владельца и права
