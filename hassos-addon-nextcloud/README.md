@@ -4,80 +4,37 @@
 
 ## About
 
-Nextcloud is a suite of client-server software for creating and using file hosting services.
-Nextcloud application functionally is similar to Dropbox.
-Unlike Dropbox, Nextcloud does not offer off-premises file storage hosting.
+This is a Home Assistant add-on that integrates [Nextcloud](https://nextcloud.com/), a self-hosted file sync and collaboration platform. With this add-on, you can access and manage your files, calendars, contacts, and more directly from your Home Assistant instance.
 
-A safe home for all your data. Access & share your files, calendars, contacts, mail
-& more from any device, on your terms.
+## Features
+- **Web Interface**: Complete the initial setup via the Nextcloud web interface using the "Open Web UI" button.
+- **Trusted Domains**: Automatically configures trusted domains, including your custom domain and container IP.
+- **Persistent Data**: Stores Nextcloud data in `/share/nextcloud` for easy backups.
 
-## Requirements
-- Home Assistant
-- MYSQL Server with a database and user
+## Installation
 
-## Install
-
-These add-ons can be installed in Home Assistant by [configuring the following URL in the Hass.io panel](https://home-assistant.io/hassio/installing_third_party_addons/):
-
+1. **Add the Repository**:
+   - In Home Assistant, go to `Settings` → `Add-ons` → `Add-on Store`.
+   - Click the three-dot menu, select `Repositories`, and add:
 ```txt
-https://github.com/enricodeleo/hassio-addon-nextcloud
+https://github.com/x9132706292/hassos-addons
 ```
+- Click `Add`.
 
-## Config
-- Add a user/database for Nextcloud to your MYSQL.
-If you use the MariaDB-Addon you can create a new user in the Addon-Config.
+2. **Install the Add-on**:
+- Find "Nextcloud" in the Add-on Store and click `Install`.
+- Wait for the installation to complete.
 
-Example Config:
-```yaml
-databases:
-  - homeassistant
-  - nextcloud
-logins:
-  - username: homeassistant
-    password: YOURPASSWORD
-  - username: nextcloud
-    password: YOURPASSWORD
-rights:
-  - username: homeassistant
-    database: homeassistant
-  - username: nextcloud
-    database: nextcloud
+3. **Configure the Database**:
+- This add-on uses PostgreSQL. You can use the [TimescaleDB add-on](https://github.com/hassio-addons/addon-timescaledb) with host `77b2833f-timescaledb:5432`.
+- Set up a database beforehand:
+```bash
+psql -h <db_host> -U postgres
+CREATE DATABASE nextcloud;
+CREATE USER nextcloud WITH PASSWORD 'your_secure_password';
+ALTER DATABASE nextcloud OWNER TO nextcloud;
+GRANT ALL PRIVILEGES ON DATABASE nextcloud TO nextcloud;
+\c nextcloud
+GRANT ALL ON SCHEMA public TO nextcloud;
+\q
 ```
-
-- Configure Nextcloud addon accordingly :
-
-```yaml
-MYSQL_DATABASE: nextcloud                         # The Database you created in step above.
-MYSQL_USER: nextcloud                             # The User you created in step above.
-MYSQL_PASSWORD: aRandomPassword                   # The Password you created in step above.
-MYSQL_HOST: addon_core_mariadb                    # The Host of your SQL-Server. The default port is 3306.
-NEXTCLOUD_ADMIN_USER: someUsername                # The User for your Nextcloud-instance.
-NEXTCLOUD_ADMIN_PASSWORD: somePassword            # The Password for your Nextcloud-instance.
-NEXTCLOUD_TRUSTED_DOMAINS: cloud.yourdomain.com   # The Domain for your Nextcloud-instance. Can also be a local IP for local access i.e: 192.168.178.5
-TRUSTED_PROXIES: 127.0.0.1 172.30.33.0/24 192.168.1.1   # Allowed origin ip of proxies
-```
-This list is not exhaustive. The documentation for env variables can be found at https://github.com/docker-library/docs/blob/master/nextcloud/README.md#auto-configuration-via-environment-variables.
-Do not forget to map a port to your host.
-
-## Start
-
-- Start the addon. Wait a while and check the log for any errors.
-- Open yourdomain.com:8888 (where ":8888" is the port configured in the Nextcloud addon).
-
-### SSL
-
-- Add SSL with something like [Nginx Proxy Manager addon](https://github.com/hassio-addons/addon-nginx-proxy-manager) for example with the Port from step above.
-- Enjoy Nextcloud with SSL and without adding ":8888" to your Domain.
-
-## Troubleshooting
-
-If you have in issue with your installation, please be sure to checkout the [TROUBLESHOOT](https://github.com/mtthp/hassio-addons/blob/master/nextcloud/TROUBLESHOOT.md) guide before opening an issue.
-
-
-## Acknowledgement
-
-All credits to [original project](https://github.com/mtthp/hassio-addons) from where this repository has been originally cloned. The purpose of this repo is having a dedicated repository for Nextcloud.
-
-- [Matthieu Petit](https://github.com/mtthp) for the [oroginal project](https://github.com/mtthp/hassio-addons)
-- [Patrick Streule](https://github.com/pstreule) for the [README](https://github.com/pstreule/hassio-addons/blob/master/README.md)
-- [home-assistant](https://github.com/home-assistant) for the [build workflow](https://github.com/home-assistant/addons-development/blob/master/.github/workflows/builder.yml)
