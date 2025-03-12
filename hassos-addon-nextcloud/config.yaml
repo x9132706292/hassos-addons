@@ -20,5 +20,9 @@ map:
   - share:rw
 options:
   trusted_domains: "localhost"
+  admin_user: "admin"
+  admin_password: "nextcloud"
 schema:
   trusted_domains: "str"
+  admin_user: "str"
+  admin_password: "password"
