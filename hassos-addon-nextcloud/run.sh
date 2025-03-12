@@ -8,7 +8,7 @@ DB_HOST="77b2833f-timescaledb"
 DB_PORT="5432"
 DB_NAME="nextcloud"
 DB_USER="nextcloud"
-DB_PASSWORD="your_secure_password"  # Замени на свой пароль
+DB_PASSWORD="your_secure_password"  # Оставь как есть для отладки
 
 # Устанавливаем путь к данным и конфигурации
 DATA_DIR="/share/nextcloud"
@@ -86,14 +86,9 @@ if [ ! -f "$CONFIG_FILE" ]; then
     --database-pass="$DB_PASSWORD" >&2
   if [ $? -eq 0 ]; then
     echo "[INFO] Automated installation completed successfully."
-    ls -l "$CONFIG_DIR" >&2
-    ls -l /var/www/html/config >&2
-    if [ -f "/var/www/html/config/config.php" ] && [ ! -f "$CONFIG_FILE" ]; then
-      echo "[INFO] Moving config.php from /var/www/html to $CONFIG_DIR..."
-      mv /var/www/html/config/* "$CONFIG_DIR/"
-      chown www-data:www-data "$CONFIG_FILE"
-      chmod 660 "$CONFIG_FILE"
-    fi
+    # Исправляем права на config.php
+    chown www-data:www-data "$CONFIG_FILE"
+    chmod 660 "$CONFIG_FILE"
     ls -l "$CONFIG_DIR" >&2
   else
     echo "[ERROR] Automated installation failed." >&2
