@@ -3,23 +3,22 @@
 # Читаем настройки из /data/options.json
 TRUSTED_DOMAINS=$(jq -r '.trusted_domains' /data/options.json)
 
-# Устанавливаем переменные окружения для Nextcloud
-export NEXTCLOUD_DATA_DIR="/share/nextcloud"
-export NEXTCLOUD_TRUSTED_DOMAINS="$TRUSTED_DOMAINS $(hostname -i):8080"
+# Устанавливаем путь к данным вручную
+DATA_DIR="/share/nextcloud"
 
 # Отладочный вывод
-echo "[DEBUG] NEXTCLOUD_DATA_DIR=$NEXTCLOUD_DATA_DIR"
-echo "[DEBUG] NEXTCLOUD_TRUSTED_DOMAINS=$NEXTCLOUD_TRUSTED_DOMAINS" >&2
+echo "[DEBUG] DATA_DIR=$DATA_DIR"
+echo "[DEBUG] TRUSTED_DOMAINS=$TRUSTED_DOMAINS $(hostname -i):8080" >&2
 
-# Исправляем права на NEXTCLOUD_DATA_DIR
-echo "[INFO] Fixing permissions for $NEXTCLOUD_DATA_DIR..."
-chown -R www-data:www-data "$NEXTCLOUD_DATA_DIR"
-chmod -R 770 "$NEXTCLOUD_DATA_DIR"
+# Исправляем права на DATA_DIR
+echo "[INFO] Fixing permissions for $DATA_DIR..."
+chown -R www-data:www-data "$DATA_DIR"
+chmod -R 770 "$DATA_DIR"
 
 # Проверяем, существует ли конфигурация
-CONFIG_FILE="$NEXTCLOUD_DATA_DIR/config/config.php"
+CONFIG_FILE="$DATA_DIR/config/config.php"
 if [ ! -f "$CONFIG_FILE" ]; then
-  echo "[INFO] No config found. Please complete the setup via the web interface at http://<ip>:8080 or through Home Assistant Ingress"
+  echo "[INFO] No config found. Please complete the setup via the web interface at http://<ip>:8080"
 else
   echo "[INFO] Nextcloud config found, updating trusted domains if necessary..."
 
@@ -38,11 +37,6 @@ else
   # Обновляем trusted_domains через occ
   php occ config:system:set trusted_domains 0 --value="localhost"
   php occ config:system:set trusted_domains 1 --value="$(hostname -i):8080"
-  if [ -n "$HASSIO_TOKEN" ]; then
-    HA_DOMAIN=$(hostname -f)
-    php occ config:system:set trusted_domains 2 --value="$HA_DOMAIN"
-    echo "[INFO] Added Home Assistant domain ($HA_DOMAIN) to trusted domains for Ingress."
-  fi
   if [ $? -eq 0 ]; then
     echo "[INFO] Trusted domains updated successfully."
   else
@@ -50,7 +44,7 @@ else
   fi
 fi
 
-# Даём время Apache запуститься перед ответом Ingress
+# Даём время Apache запуститься
 echo "[INFO] Starting Nextcloud, waiting for Apache to be ready..."
 sleep 10
 
