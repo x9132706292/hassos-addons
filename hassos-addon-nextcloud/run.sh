@@ -4,7 +4,7 @@
 TRUSTED_DOMAINS=$(jq -r '.trusted_domains | join(" ")' /data/options.json)
 ADMIN_USER=$(jq -r '.admin_user // "admin"' /data/options.json)
 ADMIN_PASSWORD=$(jq -r '.admin_password // "nextcloud"' /data/options.json)
-DB_TYPE=$(jq -r '.db_type // "pgsql"' /data/options.json)  # mysql (MySQL/MariaDB), pgsql (PostgreSQL), sqlite, oci (Oracle)
+DB_TYPE=$(jq -r '.db_type // "pgsql"' /data/options.json)
 DB_HOST=$(jq -r '.db_host // "77b2833f-timescaledb"' /data/options.json)
 DB_PORT=$(jq -r '.db_port // "5432"' /data/options.json)
 DB_NAME=$(jq -r '.db_name // "nextcloud"' /data/options.json)
@@ -85,6 +85,12 @@ if [ ! -f "$CONFIG_FILE" ]; then
     fi
   fi
 
+  # Временная директория для config.php
+  TEMP_CONFIG_DIR="/var/www/html/config"
+  mkdir -p "$TEMP_CONFIG_DIR"
+  chown www-data:www-data "$TEMP_CONFIG_DIR"
+  chmod 770 "$TEMP_CONFIG_DIR"
+
   # Автоматическая установка
   sudo -u www-data php occ maintenance:install \
     --admin-user="$ADMIN_USER" \
@@ -98,8 +104,16 @@ if [ ! -f "$CONFIG_FILE" ]; then
     --database-pass="$DB_PASSWORD" >&2
   if [ $? -eq 0 ]; then
     echo "[INFO] Automated installation completed successfully."
-    chown www-data:www-data "$CONFIG_FILE"
-    chmod 660 "$CONFIG_FILE"
+    # Перемещаем config.php в нужное место
+    if [ -f "$TEMP_CONFIG_DIR/config.php" ]; then
+      mv "$TEMP_CONFIG_DIR/config.php" "$CONFIG_FILE"
+      chown www-data:www-data "$CONFIG_FILE"
+      chmod 660 "$CONFIG_FILE"
+      echo "[INFO] Moved config.php to $CONFIG_FILE"
+    else
+      echo "[ERROR] config.php not found in $TEMP_CONFIG_DIR after installation" >&2
+      exit 1
+    fi
     ls -l "$CONFIG_DIR" >&2
   else
     echo "[ERROR] Automated installation failed." >&2
