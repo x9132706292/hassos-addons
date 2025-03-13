@@ -1,4 +1,4 @@
-FROM nextcloud:31.0.0.18
+FROM nextcloud:31.0.0
 
 # Устанавливаем зависимости
 RUN apt-get update && apt-get install -y \
