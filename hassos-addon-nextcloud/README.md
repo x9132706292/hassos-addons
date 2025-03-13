@@ -76,16 +76,16 @@
 ## Configuration
 Option | Description	| Default |
 | --- | --- | ---|
-| 'trusted_domains' | List of trusted domains for Nextcloud access | '["localhost"]' |
-| 'admin_user' | Admin username for initial setup | 'admin' |
-| 'admin_password' | Admin password for initial setup | 'nextcloud' |
-| 'db_type' | Database type (mysql, pgsql, sqlite, oci) | 'pgsql' |
-| 'db_host' | Database host address | '77b2833f-timescaledb' |
-| 'db_port' | Database port | '5432' |
-| 'db_name' | Database name | 'nextcloud' |
-| 'db_user' | Database username | 'nextcloud' |
-| 'db_password' | Database password | 'your_secure_password' |
-| 'data_dir' | Directory for Nextcloud data | '/share/nextcloud' |
+| `trusted_domains` | List of trusted domains for Nextcloud access | `["localhost"]` |
+| `admin_user` | Admin username for initial setup | `admin` |
+| `admin_password` | Admin password for initial setup | `nextcloud` |
+| `db_type` | Database type (mysql, pgsql, sqlite, oci) | `pgsql` |
+| `db_host` | Database host address | `77b2833f-timescaledb` |
+| `db_port` | Database port | `5432` |
+| `db_name` | Database name | `nextcloud` |
+| `db_user` | Database username | `nextcloud` |
+| `db_password` | Database password | `your_secure_password` |
+| `data_dir` | Directory for Nextcloud data | `/share/nextcloud` |
 
 - The add-on appends <container_ip>:8080 to trusted_domains.
 
