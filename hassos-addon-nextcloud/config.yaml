@@ -2,7 +2,7 @@ name: "Nextcloud"
 version: "31.0.0.18"
 slug: "nextcloud"
 description: "A safe home for all your data with Nextcloud"
-url: "https://github.com/x9132706292/hassos-addons/tree/main/hassos-addon-nextcloud/"
+url: "https://github.com/x9132706292/hassos-addons/tree/main/hassos-addon-nextcloud"
 arch:
   - amd64
   - armhf
@@ -11,7 +11,6 @@ arch:
   - i386
 startup: "application"
 boot: "auto"
-webui: "http://[HOST]:[PORT:8080]"
 ports:
   80/tcp: 8080
 ports_description:
@@ -19,10 +18,27 @@ ports_description:
 map:
   - share:rw
 options:
-  trusted_domains: "localhost"
+  trusted_domains:
+    - "localhost"
   admin_user: "admin"
   admin_password: "nextcloud"
+  db_type: "pgsql"
+  db_host: "77b2833f-timescaledb"
+  db_port: "5432"
+  db_name: "nextcloud"
+  db_user: "nextcloud"
+  db_password: "your_secure_password"
+  data_dir: "/share/nextcloud"
 schema:
-  trusted_domains: "str"
+  trusted_domains:
+    - "str"
   admin_user: "str"
   admin_password: "password"
+  db_type: "list(mysql|pgsql|sqlite|oci)"
+  db_host: "str"
+  db_port: "int"
+  db_name: "str"
+  db_user: "str"
+  db_password: "password"
+  data_dir: "str"
+webui: "http://[HOST]:[PORT:8080]"
