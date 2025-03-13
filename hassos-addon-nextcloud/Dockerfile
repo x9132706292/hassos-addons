@@ -4,6 +4,7 @@ FROM nextcloud:31.0.0
 RUN apt-get update && apt-get install -y \
     bash \
     jq \
+    postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
 # Копируем скрипт запуска
