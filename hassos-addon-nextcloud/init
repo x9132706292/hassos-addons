@@ -15,5 +15,6 @@ fi
 
 echo 'Starting with the following configuration:';
 TRUSTED_DOMAINS=$(jq -r '.trusted_domains | join(" ")' /data/options.json)
+echo "[DEBUG] TRUSTED_DOMAINS=$TRUSTED_DOMAINS" >&2
 
 /entrypoint.sh "$@"
