@@ -1,7 +1,5 @@
 #!/bin/bash
 
-echo "------------------------" >&2
-
 # Читаем настройки из /data/options.json
 TRUSTED_DOMAINS=$(jq -r '.trusted_domains | join(" ")' /data/options.json)
 ADMIN_USER=$(jq -r '.admin_user // "admin"' /data/options.json)
@@ -84,9 +82,16 @@ if [ ! -f "$CONFIG_FILE" ]; then
   echo "$NOW [DEBUG] Checking permissions for /var/www/html..."
   ls -ld /var/www/html >&2
 
-  # Проверяем права на /usr/src/nextcloud/config
-  echo "$NOW [DEBUG] Checking permissions for /usr/src/nextcloud/config..."
-  ls -ld /usr/src/nextcloud/config >&2
+  # Проверяем права на /usr/src/nextcloud/apps
+  echo "$NOW [DEBUG] Checking permissions for /usr/src/nextcloud/apps..."
+  ls -ld /usr/src/nextcloud/apps >&2
+
+  # Исправляем права на apps
+  echo "$NOW [INFO] Fixing permissions for /usr/src/nextcloud/apps..."
+  chown -R www-data:www-data /usr/src/nextcloud/apps
+  chmod -R 770 /usr/src/nextcloud/apps
+  echo "$NOW [DEBUG] Permissions for /usr/src/nextcloud/apps after fix:"
+  ls -ld /usr/src/nextcloud/apps >&2
 
   TEMP_CONFIG_DIR="/var/www/html/config"
   echo "$NOW [DEBUG] Preparing temporary config directory: $TEMP_CONFIG_DIR"
@@ -107,14 +112,15 @@ if [ ! -f "$CONFIG_FILE" ]; then
     exit 1
   fi
 
-  # Тест записи в /usr/src/nextcloud/config
-  echo "$NOW [DEBUG] Testing write access to /usr/src/nextcloud/config as www-data..."
-  sudo -u www-data touch "/usr/src/nextcloud/config/testfile" 2>&1
+  # Тест записи в /usr/src/nextcloud/apps
+  echo "$NOW [DEBUG] Testing write access to /usr/src/nextcloud/apps as www-data..."
+  sudo -u www-data touch "/usr/src/nextcloud/apps/testfile" 2>&1
   if [ $? -eq 0 ]; then
-    echo "$NOW [INFO] Write test successful in /usr/src/nextcloud/config, removing testfile..."
-    rm "/usr/src/nextcloud/config/testfile"
+    echo "$NOW [INFO] Write test successful in /usr/src/nextcloud/apps, removing testfile..."
+    rm "/usr/src/nextcloud/apps/testfile"
   else
-    echo "$NOW [WARNING] Cannot write to /usr/src/nextcloud/config as www-data"
+    echo "$NOW [ERROR] Cannot write to /usr/src/nextcloud/apps as www-data"
+    exit 1
   fi
 
   # Установка с явным указанием NEXTCLOUD_CONFIG_DIR
