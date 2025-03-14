@@ -1,5 +1,5 @@
 name: "Nextcloud"
-version: "29.0.12"
+version: "31.0.0"
 slug: "nextcloud"
 description: "A safe home for all your data with Nextcloud"
 url: "https://github.com/x9132706292/hassos-addons/tree/main/hassos-addon-nextcloud"
