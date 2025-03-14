@@ -1,15 +1,14 @@
 #!/bin/bash
 
-echo "------------------------" >&2
-
 # Функция для форматированного вывода в лог
 log() {
   local level="$1"
   local message="$2"
   local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-  echo "[$level] $timestamp" >&2
-  echo "$message" >&2
+  echo "[$level] $timestamp $message" >&2
 }
+
+echo "------------------------" >&2
 
 # Читаем настройки из /data/options.json
 TRUSTED_DOMAINS=$(jq -r '.trusted_domains | join(" ")' /data/options.json)
