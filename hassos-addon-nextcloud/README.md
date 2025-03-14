@@ -4,7 +4,7 @@
 
 ## About
 
-This is a Home Assistant OS (HassOS) add-on that deploys a Nextcloud instance, allowing you to run a personal cloud storage solution alongside your Home Assistant setup.
+This is a Home Assistant OS (HassOS) add-on that deploys a [Nextcloud](https://nextcloud.com/) instance, allowing you to run a personal cloud storage solution alongside your Home Assistant setup.
 
 ## Features
 - Runs Nextcloud in a Docker container.
@@ -14,7 +14,7 @@ This is a Home Assistant OS (HassOS) add-on that deploys a Nextcloud instance, a
 
 ## Prerequisites
 - Home Assistant OS installed and running.
-- A PostgreSQL database instance (e.g., the TimescaleDB add-on or an external PostgreSQL server).
+- A PostgreSQL database instance (e.g., the [TimescaleDB add-on](https://github.com/expaso/hassos-addon-timescaledb) or an external PostgreSQL server).
 - Basic knowledge of Docker and database setup.
 
 ## Installation
@@ -33,7 +33,7 @@ This is a Home Assistant OS (HassOS) add-on that deploys a Nextcloud instance, a
    2. Click **Install** and wait for the installation to complete.
 
 ### Step 3: Prepare the Database
-   1. Set up a PostgreSQL database (e.g., using the TimescaleDB add-on or an external server).
+   1. Set up a PostgreSQL database (e.g., using the [TimescaleDB add-on](https://github.com/expaso/hassos-addon-timescaledb) or an external server).
    2. Create a database and user for Nextcloud:
    ```sql
    CREATE DATABASE nextcloud;
