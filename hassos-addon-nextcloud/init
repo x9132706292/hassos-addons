@@ -14,6 +14,6 @@ if [ ! -d "${SHARE_DIR}/html" ]; then
 fi
 
 echo 'Starting with the following configuration:';
-TRUSTED_DOMAINS=$(jq -r '.TRUSTED_DOMAINS | join(" ")' /data/options.json)
+TRUSTED_DOMAINS=$(jq -r '.trusted_domains | join(" ")' /data/options.json)
 
 /entrypoint.sh "$@"
