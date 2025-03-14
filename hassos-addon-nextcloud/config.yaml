@@ -17,6 +17,4 @@ ports_description:
   80/tcp: "Web interface for Nextcloud"
 map:
   - share:rw
-options:
-schema:
 webui: "http://[HOST]:[PORT:8080]"
