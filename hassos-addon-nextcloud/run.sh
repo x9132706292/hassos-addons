@@ -1,11 +1,12 @@
 #!/bin/bash
 
+echo "------------------------" >&2
+
 # Функция для форматированного вывода в лог
 log() {
   local level="$1"
   local message="$2"
   local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-  echo "------------------------" >&2
   echo "[$level] $timestamp" >&2
   echo "$message" >&2
 }
@@ -141,4 +142,48 @@ if [ ! -f "$CONFIG_FILE" ]; then
       chmod 660 "$CONFIG_FILE"
       log "INFO" "Moved config.php to $CONFIG_FILE"
     else
-      log "ERROR" "config.php not found in 
+      log "ERROR" "config.php not found in $TEMP_CONFIG_DIR after installation"
+      log "DEBUG" "Checking entire /var/www/html for config.php..."
+      find /var/www/html -name config.php >&2
+      exit 1
+    fi
+    ls -l "$CONFIG_DIR" >&2
+  else
+    log "ERROR" "Automated installation failed."
+    exit 1
+  fi
+
+  # Обновляем trusted_domains
+  IFS=' ' read -r -a TRUSTED_ARRAY <<< "$TRUSTED_DOMAINS"
+  for i in "${!TRUSTED_ARRAY[@]}"; do
+    sudo -u www-data php occ config:system:set trusted_domains "$i" --value="${TRUSTED_ARRAY[$i]}"
+  done
+  sudo -u www-data php occ config:system:set trusted_domains "${#TRUSTED_ARRAY[@]}" --value="$(hostname -i):8080"
+else
+  log "INFO" "Config found at $CONFIG_FILE, checking contents..."
+  ls -l "$CONFIG_FILE" >&2
+  cat "$CONFIG_FILE" >&2
+
+  # Ищем occ
+  OCC_PATH=$(find / -name occ 2>/dev/null | head -n 1)
+  if [ -z "$OCC_PATH" ]; then
+    log "ERROR" "occ file not found"
+    exit 1
+  fi
+  log "DEBUG" "Found occ at: $OCC_PATH"
+
+  cd "$(dirname "$OCC_PATH")" || exit 1
+  IFS=' ' read -r -a TRUSTED_ARRAY <<< "$TRUSTED_DOMAINS"
+  for i in "${!TRUSTED_ARRAY[@]}"; do
+    sudo -u www-data php occ config:system:set trusted_domains "$i" --value="${TRUSTED_ARRAY[$i]}"
+  done
+  sudo -u www-data php occ config:system:set trusted_domains "${#TRUSTED_ARRAY[@]}" --value="$(hostname -i):8080"
+  sudo -u www-data php occ status >&2
+fi
+
+# Даём время Apache запуститься
+log "INFO" "Starting Nextcloud, waiting for Apache to be ready..."
+sleep 10
+
+# Запускаем Nextcloud
+exec /entrypoint.sh apache2-foreground
