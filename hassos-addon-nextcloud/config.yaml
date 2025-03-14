@@ -13,10 +13,8 @@ startup: "application"
 boot: "auto"
 ports:
   8080/tcp: 8080
-  9980/tcp: 9980
 ports_description:
   8080/tcp: "Web interface for Nextcloud"
-  9980/tcp: "Collabora Online server"
 map:
   - share:rw
 webui: "http://[HOST]:[PORT:8080]"
