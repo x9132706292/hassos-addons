@@ -4,105 +4,97 @@
 
 ## About
 
-   This is a Home Assistant add-on that integrates [Nextcloud](https://nextcloud.com/), a self-hosted file sync and collaboration platform. With this add-on, you can access and manage your files, calendars, contacts, and more directly from your Home Assistant instance.
+This is a Home Assistant OS (HassOS) add-on that deploys a Nextcloud instance, allowing you to run a personal cloud storage solution alongside your Home Assistant setup.
 
 ## Features
-   - **Web Interface**: Complete the initial setup via the Nextcloud web interface using the "Open Web UI" button.
-   - **Trusted Domains**: Automatically configures trusted domains, including your custom domain and container IP.
-   - **Persistent Data**: Stores Nextcloud data in `/share/nextcloud` for easy backups.
+- Runs Nextcloud in a Docker container.
+- Persistent data storage in `/share/nextcloud`.
+- Supports PostgreSQL as the database backend.
+- Works with manual installation via the Nextcloud web interface.
+
+## Prerequisites
+- Home Assistant OS installed and running.
+- A PostgreSQL database instance (e.g., the TimescaleDB add-on or an external PostgreSQL server).
+- Basic knowledge of Docker and database setup.
 
 ## Installation
 
-1. **Add the Repository**:
-      - In Home Assistant, go to `Settings` → `Add-ons` → `Add-on Store`.
-      - Click the three-dot menu, select `Repositories`, and add:
-   ```txt
-   https://github.com/x9132706292/hassos-addons
-   ```
-   - Click `Add`.
+### Step 1: Add the Repository
+   1. In Home Assistant, go to **Settings > Add-ons > Add-on Store**.
+   2. Click the three-dot menu in the top-right corner and select **Repositories**.
+   3. Add the following URL:
+      ``` txt
+      https://github.com/x9132706292/hassos-addons
+      ```
+   4. Click **Add** and wait for the repository to load.
 
-2. **Install the Add-on**:
-   - Find "Nextcloud" in the Add-on Store and click `Install`.
-   - Wait for the installation to complete.
+### Step 2: Install the Add-on
+   1. Find **Nextcloud Add-on** in the Add-on Store.
+   2. Click **Install** and wait for the installation to complete.
 
-3. **Configure the Database**:
-   - Supports MySQL/MariaDB, PostgreSQL, SQLite, or Oracle. Recommended versions:
-      - **MySQL**: 8.0 / 8.4
-      - **MariaDB**: 10.6 / 10.11 (recommended) / 11.4
-      - **PostgreSQL**: 13 / 14 / 15 / 16 / 17
-      - **Oracle**: 11g / 18 / 21 / 23 (Enterprise only)
-      - **SQLite**: 3.24+ (for testing/minimal instances)
-   - For PostgreSQL example (e.g., with [TimescaleDB add-on](https://github.com/expaso/hassos-addon-timescaledb)):
-   ``` bash
-   psql -h <db_host> -U postgres
-   ```
-   ``` sql
+### Step 3: Prepare the Database
+   1. Set up a PostgreSQL database (e.g., using the TimescaleDB add-on or an external server).
+   2. Create a database and user for Nextcloud:
+   ```sql
    CREATE DATABASE nextcloud;
    CREATE USER nextcloud WITH PASSWORD 'your_secure_password';
-   ALTER DATABASE nextcloud OWNER TO nextcloud;
    GRANT ALL PRIVILEGES ON DATABASE nextcloud TO nextcloud;
-   \c nextcloud
-   GRANT ALL ON SCHEMA public TO nextcloud;
-   \q
    ```
-4. **Configure the Add-on:**
-   - Edit the configuration in Home Assistant:
-   ``` yaml
-   trusted_domains:
-     - "localhost"
-     - "nc.example.com"
-   admin_user: "admin"
-   admin_password: "nextcloud"
-   db_type: "pgsql"
-   db_host: "77b2833f-timescaledb"
-   db_port: "5432"
-   db_name: "nextcloud"
-   db_user: "nextcloud"
-   db_password: "your_secure_password"
-   data_dir: "/share/nextcloud"
-   ```
-   - Replace values as needed.
-  
-5. **Start the Add-on:**
-   - Click `Start` and check the logs:
-   ``` txt
-   [INFO] Automated installation completed successfully.
-   ```
+   3. Note the database host (e.g., `77b2833f-timescaledb`), port (default `5432`), database name (`nextcloud`), username (`nextcloud`), and password.
 
-6. **Verify:**
-   Open `http://<ip>:8080` or use the "Open Web UI" button.
-   Log in with `admin_user` and `admin_password`.
-    
-## Configuration
-Option | Description	| Default |
-| --- | --- | ---|
-| `trusted_domains` | List of trusted domains for Nextcloud access | `["localhost"]` |
-| `admin_user` | Admin username for initial setup | `admin` |
-| `admin_password` | Admin password for initial setup | `nextcloud` |
-| `db_type` | Database type (mysql, pgsql, sqlite, oci) | `pgsql` |
-| `db_host` | Database host address | `77b2833f-timescaledb` |
-| `db_port` | Database port | `5432` |
-| `db_name` | Database name | `nextcloud` |
-| `db_user` | Database username | `nextcloud` |
-| `db_password` | Database password | `your_secure_password` |
-| `data_dir` | Directory for Nextcloud data | `/share/nextcloud` |
+### Step 4: Start the Add-on
+   1. In the add-on configuration, leave the settings empty (no configuration is required).
+   2. Click Start to launch the add-on.
+   3. Check the add-on logs to ensure it starts without errors.
 
-- The add-on appends <container_ip>:8080 to trusted_domains.
+### Step 5: Complete Installation via Web Interface
+   1. Open your browser and go to `http://<your-ha-ip>:8080` (replace `<your-ha-ip>` with your Home Assistant IP).
+   2. Follow the Nextcloud web installation wizard:
+      - Set the admin username (e.g., `admin`) and password.
+      - Configure the database:
+         - **Database type:** PostgreSQL
+         - **Database user:** `nextcloud`
+         - **Database password:** `your_secure_password`
+         - **Database name:** `nextcloud`
+         - **Database host:** `77b2833f-timescaledb` (or your PostgreSQL host)
+      - Click **Finish setup**.
+   3. Wait for the installation to complete.
 
-## Notes
-- **Data Directory:** Ensure `data_dir` exists and has correct permissions (`33:33`) before starting:
-``` bash
-sudo mkdir -p /share/nextcloud
-sudo chown -R 33:33 /share/nextcloud
-sudo chmod -R 770 /share/nextcloud
-```
-## Troubleshooting
-   - **Installation Fails:**
-      - Check logs for database connection errors.
-      - Verify `db_type`, `db_host`, `db_port`, `db_user`, and `db_password`.
-   - **Config Not Found:**
-      - Ensure `<data_dir>/config/config.php` exists (`ls -l <data_dir>/config`).
-## Credits
-   - Built on [Nextcloud Docker image](https://hub.docker.com/_/nextcloud).
-## License
-MIT License. See [LICENSE] for details.
+### Step 6: (Optional) Customize `config.php`
+   - The configuration file is located at `/share/nextcloud/html/config/config.php`.
+   - To edit it:
+      1. Access the file via SSH or the Home Assistant file editor.
+      2. Example adjustments:
+         - Add trusted domains:
+         ``` php
+         'trusted_domains' => 
+           array (
+             0 => 'localhost',
+             1 => '172.30.33.8:8080', // Replace with your HA IP and port
+           ),
+         ```
+        - Set `config_is_read_only` to `true` if desired:
+        ``` php
+           'config_is_read_only' => true,
+        ```
+     3. Save the changes.
+
+### Step 7: Verify Persistence
+   - Restart the add-on to ensure settings persist.
+   - Uninstall and reinstall the add-on to confirm that data in `/share/nextcloud` remains intact.
+
+### Notes
+   - The add-on uses `/share/nextcloud` for data storage and `/share/nextcloud/html/config` for configuration.
+   - Ensure the PostgreSQL server is accessible from the add-on (check network settings if using an external DB).
+   - Logs are available in the Home Assistant add-on interface for troubleshooting.
+
+### Troubleshooting
+   - **Web interface not loading:** Check the add-on logs for errors and ensure port `8080` is not blocked.
+   - **Database connection issues:** Verify the database host, port, username, and password.
+   - **Config not persisting:** Ensure `/share/nextcloud` has correct permissions (`chown 33:33 /share/nextcloud` and `chmod 770 /share/nextcloud`).
+
+### Contributing
+Feel free to submit issues or pull requests to improve this add-on!
+
+### License
+This project is licensed under the MIT License.
