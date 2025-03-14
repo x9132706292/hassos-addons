@@ -14,7 +14,7 @@ DB_USER=$(jq -r '.db_user // "nextcloud"' /data/options.json)
 DB_PASSWORD=$(jq -r '.db_password // "your_secure_password"' /data/options.json)
 DATA_DIR=$(jq -r '.data_dir // "/share/nextcloud"' /data/options.json)
 
-CONFIG_DIR="/var/www/html/config"  # Оставляем config в стандартном месте
+CONFIG_DIR="/var/www/html/config"
 export NEXTCLOUD_DATA_DIR="$DATA_DIR"
 export NEXTCLOUD_CONFIG_DIR="$CONFIG_DIR"
 
@@ -91,12 +91,19 @@ if [ ! -f "$CONFIG_FILE" ]; then
   echo "$NOW [DEBUG] Permissions for /usr/src/nextcloud/apps after fix:"
   ls -ld /usr/src/nextcloud/apps >&2
 
+  # Подготовка CONFIG_DIR
   echo "$NOW [DEBUG] Preparing config directory: $CONFIG_DIR"
   mkdir -p "$CONFIG_DIR"
   chown www-data:www-data "$CONFIG_DIR"
   chmod 770 "$CONFIG_DIR"
   echo "$NOW [DEBUG] Permissions for $CONFIG_DIR:"
   ls -ld "$CONFIG_DIR" >&2
+
+  # Удаляем лишние .config.php файлы
+  echo "$NOW [INFO] Removing extra .config.php files from $CONFIG_DIR..."
+  find "$CONFIG_DIR" -name "*.config.php" -exec rm -f {} \;
+  echo "$NOW [DEBUG] Contents of $CONFIG_DIR after cleanup:"
+  ls -l "$CONFIG_DIR" >&2
 
   # Тест записи в /var/www/html/config
   echo "$NOW [DEBUG] Testing write access to $CONFIG_DIR as www-data..."
@@ -150,11 +157,12 @@ if [ ! -f "$CONFIG_FILE" ]; then
   fi
 
   # Обновляем trusted_domains
+  echo "$NOW [INFO] Setting trusted domains..."
   IFS=' ' read -r -a TRUSTED_ARRAY <<< "$TRUSTED_DOMAINS"
   for i in "${!TRUSTED_ARRAY[@]}"; do
-    sudo -u www-data php occ config:system:set trusted_domains "$i" --value="${TRUSTED_ARRAY[$i]}"
+    sudo -u www-data NEXTCLOUD_CONFIG_DIR="$CONFIG_DIR" php occ config:system:set trusted_domains "$i" --value="${TRUSTED_ARRAY[$i]}" >&2
   done
-  sudo -u www-data php occ config:system:set trusted_domains "${#TRUSTED_ARRAY[@]}" --value="$(hostname -i):8080"
+  sudo -u www-data NEXTCLOUD_CONFIG_DIR="$CONFIG_DIR" php occ config:system:set trusted_domains "${#TRUSTED_ARRAY[@]}" --value="$(hostname -i):8080" >&2
 else
   echo "$NOW [INFO] Config found at $CONFIG_FILE, checking contents..."
   ls -l "$CONFIG_FILE" >&2
@@ -168,15 +176,19 @@ else
   echo "$NOW [DEBUG] Found occ at: $OCC_PATH"
 
   cd "$(dirname "$OCC_PATH")" || exit 1
+  echo "$NOW [INFO] Setting trusted domains..."
   IFS=' ' read -r -a TRUSTED_ARRAY <<< "$TRUSTED_DOMAINS"
   for i in "${!TRUSTED_ARRAY[@]}"; do
-    sudo -u www-data php occ config:system:set trusted_domains "$i" --value="${TRUSTED_ARRAY[$i]}"
+    sudo -u www-data NEXTCLOUD_CONFIG_DIR="$CONFIG_DIR" php occ config:system:set trusted_domains "$i" --value="${TRUSTED_ARRAY[$i]}" >&2
   done
-  sudo -u www-data php occ config:system:set trusted_domains "${#TRUSTED_ARRAY[@]}" --value="$(hostname -i):8080"
-  sudo -u www-data php occ status >&2
+  sudo -u www-data NEXTCLOUD_CONFIG_DIR="$CONFIG_DIR" php occ config:system:set trusted_domains "${#TRUSTED_ARRAY[@]}" --value="$(hostname -i):8080" >&2
+  sudo -u www-data NEXTCLOUD_CONFIG_DIR="$CONFIG_DIR" php occ status >&2
 fi
 
 echo "$NOW [INFO] Starting Nextcloud, waiting for Apache to be ready..."
 sleep 10
+
+# Экспортируем переменную для Apache
+echo "export NEXTCLOUD_CONFIG_DIR=$CONFIG_DIR" >> /etc/apache2/envvars
 
 exec /entrypoint.sh apache2-foreground
