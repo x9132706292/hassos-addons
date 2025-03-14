@@ -7,11 +7,6 @@ if [ ! -d "${SHARE_DIR}" ]; then
     chown -R www-data:root "${SHARE_DIR}"
     chmod -R g=u "${SHARE_DIR}"
 fi
-if [ ! -d "${SHARE_DIR}/html" ]; then
-    mkdir -p "${SHARE_DIR}/html"
-    chown -R www-data:root "${SHARE_DIR}/html"
-    chmod -R g=u "${SHARE_DIR}/html"
-fi
 
 echo 'Starting with the following configuration:';
 
