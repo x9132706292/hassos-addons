@@ -14,7 +14,8 @@ if [ ! -d "${SHARE_DIR}/html" ]; then
 fi
 
 echo 'Starting with the following configuration:';
-TRUSTED_DOMAINS=$(jq -r '.trusted_domains | join(" ")' /data/options.json)
+jq --raw-output 'keys[] as $k | select(.[$k] != "" and .[$k] != null) | "\t" + ($k | ascii_upcase) + "=\"" + (.[$k]|tostring) + "\""' $CONFIG_PATH;
+eval $(jq --raw-output 'keys[] as $k | select(.[$k] != "" and .[$k] != null) | "export " + ($k | ascii_upcase) + "=\"" + (.[$k]|tostring) + "\""' $CONFIG_PATH);
 echo "[DEBUG] TRUSTED_DOMAINS=$TRUSTED_DOMAINS" >&2
 
 /entrypoint.sh "$@"
