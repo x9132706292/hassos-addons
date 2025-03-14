@@ -66,13 +66,13 @@ This is a Home Assistant OS (HassOS) add-on that deploys a Nextcloud instance, a
       1. Access the file via SSH or the Home Assistant file editor.
       2. Example adjustments:
          - Add trusted domains:
-         ``` php
-         'trusted_domains' => 
-           array (
-             0 => 'localhost',
-             1 => '172.30.33.8:8080', // Replace with your HA IP and port
-           ),
-         ```
+      ``` php
+      'trusted_domains' => 
+        array (
+          0 => 'localhost',
+          1 => '172.30.33.8:8080', // Replace with your HA IP and port
+        ),
+      ```
         - Set `config_is_read_only` to `true` if desired:
         ``` php
            'config_is_read_only' => true,
