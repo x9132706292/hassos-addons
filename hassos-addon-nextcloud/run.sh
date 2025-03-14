@@ -87,11 +87,15 @@ if [ ! -f "$CONFIG_FILE" ]; then
 
   # Временная директория для config.php
   TEMP_CONFIG_DIR="/var/www/html/config"
+  echo "[DEBUG] Preparing temporary config directory: $TEMP_CONFIG_DIR" >&2
   mkdir -p "$TEMP_CONFIG_DIR"
   chown www-data:www-data "$TEMP_CONFIG_DIR"
   chmod 770 "$TEMP_CONFIG_DIR"
+  echo "[DEBUG] Permissions for $TEMP_CONFIG_DIR:" >&2
+  ls -ld "$TEMP_CONFIG_DIR" >&2
 
-  # Автоматическая установка
+  # Автоматическая установка с отладкой
+  echo "[DEBUG] Running installation command as www-data..." >&2
   sudo -u www-data php occ maintenance:install \
     --admin-user="$ADMIN_USER" \
     --admin-pass="$ADMIN_PASSWORD" \
@@ -104,7 +108,8 @@ if [ ! -f "$CONFIG_FILE" ]; then
     --database-pass="$DB_PASSWORD" >&2
   if [ $? -eq 0 ]; then
     echo "[INFO] Automated installation completed successfully."
-    # Перемещаем config.php в нужное место
+    echo "[DEBUG] Checking for config.php in $TEMP_CONFIG_DIR..." >&2
+    ls -l "$TEMP_CONFIG_DIR" >&2
     if [ -f "$TEMP_CONFIG_DIR/config.php" ]; then
       mv "$TEMP_CONFIG_DIR/config.php" "$CONFIG_FILE"
       chown www-data:www-data "$CONFIG_FILE"
@@ -112,6 +117,8 @@ if [ ! -f "$CONFIG_FILE" ]; then
       echo "[INFO] Moved config.php to $CONFIG_FILE"
     else
       echo "[ERROR] config.php not found in $TEMP_CONFIG_DIR after installation" >&2
+      echo "[DEBUG] Checking entire /var/www/html for config.php..." >&2
+      find /var/www/html -name config.php >&2
       exit 1
     fi
     ls -l "$CONFIG_DIR" >&2
