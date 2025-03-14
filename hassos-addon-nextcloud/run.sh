@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "------------------------" >&2
+
 # Читаем настройки из /data/options.json
 TRUSTED_DOMAINS=$(jq -r '.trusted_domains | join(" ")' /data/options.json)
 ADMIN_USER=$(jq -r '.admin_user // "admin"' /data/options.json)
@@ -12,7 +14,7 @@ DB_USER=$(jq -r '.db_user // "nextcloud"' /data/options.json)
 DB_PASSWORD=$(jq -r '.db_password // "your_secure_password"' /data/options.json)
 DATA_DIR=$(jq -r '.data_dir // "/share/nextcloud"' /data/options.json)
 
-CONFIG_DIR="$DATA_DIR/config"
+CONFIG_DIR="/var/www/html/config"  # Оставляем config в стандартном месте
 export NEXTCLOUD_DATA_DIR="$DATA_DIR"
 export NEXTCLOUD_CONFIG_DIR="$CONFIG_DIR"
 
@@ -45,10 +47,6 @@ ls -l "$DATA_DIR" >&2
 echo "$NOW [INFO] Fixing permissions for $DATA_DIR..."
 chown -R www-data:www-data "$DATA_DIR"
 chmod -R 770 "$DATA_DIR"
-
-mkdir -p "$CONFIG_DIR"
-chown www-data:www-data "$CONFIG_DIR"
-chmod 770 "$CONFIG_DIR"
 
 echo "$NOW [INFO] Permissions after fix:"
 ls -ld "$DATA_DIR" >&2
@@ -93,22 +91,21 @@ if [ ! -f "$CONFIG_FILE" ]; then
   echo "$NOW [DEBUG] Permissions for /usr/src/nextcloud/apps after fix:"
   ls -ld /usr/src/nextcloud/apps >&2
 
-  TEMP_CONFIG_DIR="/var/www/html/config"
-  echo "$NOW [DEBUG] Preparing temporary config directory: $TEMP_CONFIG_DIR"
-  mkdir -p "$TEMP_CONFIG_DIR"
-  chown www-data:www-data "$TEMP_CONFIG_DIR"
-  chmod 770 "$TEMP_CONFIG_DIR"
-  echo "$NOW [DEBUG] Permissions for $TEMP_CONFIG_DIR:"
-  ls -ld "$TEMP_CONFIG_DIR" >&2
+  echo "$NOW [DEBUG] Preparing config directory: $CONFIG_DIR"
+  mkdir -p "$CONFIG_DIR"
+  chown www-data:www-data "$CONFIG_DIR"
+  chmod 770 "$CONFIG_DIR"
+  echo "$NOW [DEBUG] Permissions for $CONFIG_DIR:"
+  ls -ld "$CONFIG_DIR" >&2
 
   # Тест записи в /var/www/html/config
-  echo "$NOW [DEBUG] Testing write access to $TEMP_CONFIG_DIR as www-data..."
-  sudo -u www-data touch "$TEMP_CONFIG_DIR/testfile" 2>&1
+  echo "$NOW [DEBUG] Testing write access to $CONFIG_DIR as www-data..."
+  sudo -u www-data touch "$CONFIG_DIR/testfile" 2>&1
   if [ $? -eq 0 ]; then
     echo "$NOW [INFO] Write test successful, removing testfile..."
-    rm "$TEMP_CONFIG_DIR/testfile"
+    rm "$CONFIG_DIR/testfile"
   else
-    echo "$NOW [ERROR] Cannot write to $TEMP_CONFIG_DIR as www-data"
+    echo "$NOW [ERROR] Cannot write to $CONFIG_DIR as www-data"
     exit 1
   fi
 
@@ -123,9 +120,9 @@ if [ ! -f "$CONFIG_FILE" ]; then
     exit 1
   fi
 
-  # Установка с явным указанием NEXTCLOUD_CONFIG_DIR
-  echo "$NOW [DEBUG] Running installation command as www-data with NEXTCLOUD_CONFIG_DIR=$TEMP_CONFIG_DIR..."
-  sudo -u www-data NEXTCLOUD_CONFIG_DIR="$TEMP_CONFIG_DIR" php occ maintenance:install \
+  # Установка
+  echo "$NOW [DEBUG] Running installation command as www-data with NEXTCLOUD_CONFIG_DIR=$CONFIG_DIR..."
+  sudo -u www-data NEXTCLOUD_CONFIG_DIR="$CONFIG_DIR" php occ maintenance:install \
     --admin-user="$ADMIN_USER" \
     --admin-pass="$ADMIN_PASSWORD" \
     --data-dir="$DATA_DIR" \
@@ -137,27 +134,22 @@ if [ ! -f "$CONFIG_FILE" ]; then
     --database-pass="$DB_PASSWORD" >&2
   if [ $? -eq 0 ]; then
     echo "$NOW [INFO] Automated installation completed successfully."
-    echo "$NOW [DEBUG] Checking for config.php in $TEMP_CONFIG_DIR..."
-    ls -l "$TEMP_CONFIG_DIR" >&2
-    if [ -f "$TEMP_CONFIG_DIR/config.php" ]; then
-      mv "$TEMP_CONFIG_DIR/config.php" "$CONFIG_FILE"
-      chown www-data:www-data "$CONFIG_FILE"
-      chmod 660 "$CONFIG_FILE"
-      echo "$NOW [INFO] Moved config.php to $CONFIG_FILE"
-    else
-      echo "$NOW [ERROR] config.php not found in $TEMP_CONFIG_DIR after installation"
+    echo "$NOW [DEBUG] Checking for config.php in $CONFIG_DIR..."
+    ls -l "$CONFIG_DIR" >&2
+    if [ ! -f "$CONFIG_FILE" ]; then
+      echo "$NOW [ERROR] config.php not found in $CONFIG_DIR after installation"
       echo "$NOW [DEBUG] Checking entire /var/www/html for config.php..."
       find /var/www/html -name config.php >&2
       echo "$NOW [DEBUG] Checking /usr/src/nextcloud/config for config.php..."
       ls -l /usr/src/nextcloud/config >&2
       exit 1
     fi
-    ls -l "$CONFIG_DIR" >&2
   else
     echo "$NOW [ERROR] Automated installation failed."
     exit 1
   fi
 
+  # Обновляем trusted_domains
   IFS=' ' read -r -a TRUSTED_ARRAY <<< "$TRUSTED_DOMAINS"
   for i in "${!TRUSTED_ARRAY[@]}"; do
     sudo -u www-data php occ config:system:set trusted_domains "$i" --value="${TRUSTED_ARRAY[$i]}"
