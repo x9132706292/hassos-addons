@@ -85,6 +85,10 @@ if [ ! -f "$CONFIG_FILE" ]; then
     fi
   fi
 
+  # Проверяем права на /var/www/html
+  echo "[DEBUG] Checking permissions for /var/www/html..." >&2
+  ls -ld /var/www/html >&2
+
   # Временная директория для config.php
   TEMP_CONFIG_DIR="/var/www/html/config"
   echo "[DEBUG] Preparing temporary config directory: $TEMP_CONFIG_DIR" >&2
@@ -93,6 +97,17 @@ if [ ! -f "$CONFIG_FILE" ]; then
   chmod 770 "$TEMP_CONFIG_DIR"
   echo "[DEBUG] Permissions for $TEMP_CONFIG_DIR:" >&2
   ls -ld "$TEMP_CONFIG_DIR" >&2
+
+  # Тест записи от www-data
+  echo "[DEBUG] Testing write access to $TEMP_CONFIG_DIR as www-data..." >&2
+  sudo -u www-data touch "$TEMP_CONFIG_DIR/testfile" 2>&1
+  if [ $? -eq 0 ]; then
+    echo "[INFO] Write test successful, removing testfile..." >&2
+    rm "$TEMP_CONFIG_DIR/testfile"
+  else
+    echo "[ERROR] Cannot write to $TEMP_CONFIG_DIR as www-data" >&2
+    exit 1
+  fi
 
   # Автоматическая установка с отладкой
   echo "[DEBUG] Running installation command as www-data..." >&2
