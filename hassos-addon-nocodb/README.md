@@ -1,7 +1,7 @@
 <h1 align="center" style="border-bottom: none">
     <div>
         <a style="color:#36f" href="https://www.nocodb.com">
-            <img src="/packages/nc-gui/assets/img/icons/512x512.png" width="80" />
+            <img src="/hassos-addon-nocodb/512x512.png" width="80" />
             <br>
             NocoDB
         </a>
