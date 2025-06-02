@@ -10,6 +10,7 @@ COPY init /
 RUN chmod a+x /init
 
 ENTRYPOINT [ "/init" ]
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 
 # Start Nocodb
 CMD ["/usr/src/appEntry/start.sh"]
