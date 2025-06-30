@@ -19,4 +19,6 @@ options:
   REDIS_PASSWORD: null
 schema:
   REDIS_PASSWORD: "password?"
-
+map:
+  - share:rw
+  - config:rw
