@@ -2,7 +2,7 @@ name: "Redis"
 version: "7.2.4"
 slug: "redis"
 description: "Redis server for Home Assistant"
-url: "https://github.com/x9132706292/hassos-addons/tree/main/hassio-addon-redis"
+url: "https://github.com/x9132706292/hassos-addons/"
 startup: "services"
 boot: "auto"
 arch:
