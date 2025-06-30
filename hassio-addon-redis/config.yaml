@@ -18,7 +18,4 @@ ports_description:
 options:
   password: null
 schema:
-  password: "password?"
-map:
-  - share:rw
-  - config:rw
+  password: password?
