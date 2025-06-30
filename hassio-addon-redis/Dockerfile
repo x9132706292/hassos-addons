@@ -1,12 +1,15 @@
-ARG BUILD_FROM
-FROM $BUILD_FROM
+FROM redis:7.2.4
 
-# Установка Redis
-RUN apk add --no-cache redis
+# Устанавливаем утилиты
+RUN apt-get update && apt-get install -y \
+    jq \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy s6 service configuration
-COPY rootfs /
+COPY run.sh /run.sh
+RUN chmod +x /run.sh
 
-# Set up s6-overlay service
-COPY run.sh /etc/services.d/redis/run
-RUN chmod a+x /etc/services.d/redis/run
+CMD ["/run.sh"]
+CMD [ "redis-server", "--appendonly yes", "--requirepass ${REDIS_PASSWORD}"]
+
+# Health check
+HEALTHCHECK CMD redis-cli --raw incr ping || exit 1
