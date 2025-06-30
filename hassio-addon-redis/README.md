@@ -1,6 +1,6 @@
 # Redis Add-on for Home Assistant
 
-![Redis Add-on Logo](https://github.com/x9132706292/hassos-addons/blob/main/hassio-addon-redis/logo.png)
+![Redis Add-on Logo](logo.png)
 
 ## Description
 This add-on provides a Redis server for Home Assistant, enabling fast in-memory data storage for integrations, scripts, and automations. Redis is a high-performance key-value store that can be used for caching, session management, or real-time data processing.
