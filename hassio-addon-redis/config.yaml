@@ -16,6 +16,8 @@ ports:
 ports_description:
   6379/tcp: "Redis server port"
 options:
+  username: "default"
   password: null
 schema:
+  username: str
   password: password?
