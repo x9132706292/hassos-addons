@@ -1,15 +1,12 @@
-FROM redis:7.2.4
+ARG BUILD_FROM
+FROM $BUILD_FROM
 
-# Устанавливаем утилиты
-RUN apt-get update && apt-get install -y \
-    jq \
-    && rm -rf /var/lib/apt/lists/*
+# Установка Redis
+RUN apk add --no-cache redis
 
+# Копирование скрипта запуска
 COPY run.sh /run.sh
-RUN chmod +x /run.sh
+RUN chmod a+x /run.sh
 
-CMD ["/run.sh"]
-CMD [ "redis-server", "--appendonly yes", "--requirepass ${REDIS_PASSWORD}"]
-
-# Health check
-HEALTHCHECK CMD redis-cli --raw incr ping || exit 1
+# Запуск сервиса
+CMD [ "/run.sh" ]
