@@ -9,6 +9,7 @@ arch:
   - armv7
   - i386
 startup: "application"
+url: "https://github.com/x9132706292/hassos-addons/"
 boot: "auto"
 options:
   POSTGRES_HOST: "77b2833f-timescaledb"
