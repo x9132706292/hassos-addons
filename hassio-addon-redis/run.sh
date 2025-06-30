@@ -2,7 +2,7 @@
 CONFIG_PATH=/data/options.json
 
 # Получение пароля из настроек
-PASSWORD=$(jq --raw-output '.REDIS_PASSWORD // empty' $CONFIG_PATH)
+PASSWORD=$(jq --raw-output '.password // empty' $CONFIG_PATH)
 
 # Формирование конфигурации Redis
 if [ -n "$PASSWORD" ]; then
