@@ -1,0 +1,19 @@
+name: "Redis"
+version: "7.2.4"
+slug: "redis"
+description: "Redis for Home Assistant"
+arch:
+  - aarch64
+  - amd64
+  - armhf
+  - armv7
+  - i386
+init: false
+startup: "application"
+boot: "auto"
+options:
+  REDIS_PASSWORD: "redis_password"
+schema:
+  REDIS_PASSWORD: password
+ports:
+  "6379/tcp": 6379
