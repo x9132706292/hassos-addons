@@ -9,7 +9,7 @@ COPY run.sh /run.sh
 RUN chmod +x /run.sh
 
 CMD ["/run.sh"]
-CMD [ "redis-server", "--appendonly yes", "--requirepass ${REDIS_PASSWORD}"]
+CMD [ "redis-server", "/etc/redis.conf"]
 
 # Health check
 HEALTHCHECK CMD redis-cli --raw incr ping || exit 1
