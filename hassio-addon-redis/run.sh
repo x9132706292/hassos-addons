@@ -16,6 +16,3 @@ if [ -n "$PASSWORD" ]; then
 else
   echo "" > $REDIS_CONF
 fi
-
-# Start Redis server
-exec redis-server $REDIS_CONF
