@@ -36,5 +36,3 @@ schema:
 ports:
   "3000/tcp": 3000
 webui: "http://[HOST]:[PORT:3000]"
-panel_icon: "mdi:table"
-panel_title: "Teable"
