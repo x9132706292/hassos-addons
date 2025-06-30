@@ -8,14 +8,31 @@ arch:
   - armhf
   - armv7
   - i386
+init: false
 startup: "application"
 boot: "auto"
 options:
-  prisma_database_url: "postgres://teable:teable@77b2833f-timescaledb:5432/teable"
-  public_origin: "http://127.0.0.1:3000"
+  POSTGRES_HOST: "77b2833f-timescaledb"
+  POSTGRES_PORT: 5432
+  POSTGRES_DB: "teable"
+  POSTGRES_USER: "teable"
+  POSTGRES_PASSWORD: "teable"
+  REDIS_HOST: "2118a69b-redis"
+  REDIS_PORT: 6379
+  REDIS_DB: 0
+  REDIS_PASSWORD: "redis_password"
+  PUBLIC_ORIGIN: "http://127.0.0.1:3000"
 schema:
-  prisma_database_url: str
-  public_origin: str
+  POSTGRES_HOST: str
+  POSTGRES_PORT: int(1,65534)
+  POSTGRES_DB: str
+  POSTGRES_USER: str
+  POSTGRES_PASSWORD: password
+  REDIS_HOST: str
+  REDIS_PORT: int(1,65534)
+  REDIS_DB: int
+  REDIS_PASSWORD: password
+  PUBLIC_ORIGIN: str
 ports:
   "3000/tcp": 3000
 webui: "http://[HOST]:[PORT:3000]"
