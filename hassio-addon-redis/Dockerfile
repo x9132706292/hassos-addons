@@ -4,9 +4,9 @@ FROM $BUILD_FROM
 # Установка Redis
 RUN apk add --no-cache redis
 
-# Копирование скрипта запуска
-COPY run.sh /run.sh
-RUN chmod a+x /run.sh
+# Copy s6 service configuration
+COPY rootfs /
 
-# Запуск сервиса
-CMD [ "/run.sh" ]
+# Set up s6-overlay service
+COPY run.sh /etc/services.d/redis/run
+RUN chmod a+x /etc/services.d/redis/run
