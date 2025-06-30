@@ -8,3 +8,5 @@ set -e
 CONFIG_PATH=/data/options.json
 
 export REDIS_PASSWORD=$(jq --raw-output '.password // empty' $CONFIG_PATH)
+
+exec redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
