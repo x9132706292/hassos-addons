@@ -9,6 +9,8 @@ export PRISMA_DATABASE_URL="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@$
 export BACKEND_CACHE_PROVIDER=redis
 export BACKEND_CACHE_REDIS_URI=redis://default:${REDIS_PASSWORD}@${REDIS_HOST}:${REDIS_PORT}/${REDIS_DB}
 
+echo $PRISMA_DATABASE_URL
+echo $BACKEND_CACHE_REDIS_URI
 
 run_migration() {
     echo "Running database migration..."
