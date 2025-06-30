@@ -16,9 +16,9 @@ ports:
 ports_description:
   6379/tcp: "Redis server port"
 options:
-  REDIS_PASSWORD: null
+  password: null
 schema:
-  REDIS_PASSWORD: "password?"
+  password: "password?"
 map:
   - share:rw
   - config:rw
