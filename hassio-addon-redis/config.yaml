@@ -1,19 +1,22 @@
 name: "Redis"
 version: "7.2.4"
 slug: "redis"
-description: "Redis for Home Assistant"
+description: "Redis server for Home Assistant"
+url: "https://github.com/x9132706292/hassos-addons/tree/main/hassio-addon-redis"
+startup: "services"
+boot: "auto"
 arch:
   - aarch64
   - amd64
   - armhf
   - armv7
   - i386
-init: false
-startup: "application"
-boot: "auto"
-options:
-  REDIS_PASSWORD: "redis_password"
-schema:
-  REDIS_PASSWORD: password
 ports:
-  "6379/tcp": 6379
+  6379/tcp: 6379
+ports_description:
+  6379/tcp: "Redis server port"
+options:
+  REDIS_PASSWORD: null
+schema:
+  REDIS_PASSWORD: "password?"
+
