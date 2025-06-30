@@ -1,16 +1,21 @@
-#!/bin/bash
-CONFIG_PATH=/data/options.json
+#!/usr/bin/with-contenv bash
+# ==============================================================================
+# Home Assistant Add-on: Redis
+# Runs the Redis server
+# ==============================================================================
 
-# Получение пароля из настроек
+CONFIG_PATH=/data/options.json
+REDIS_CONF=/etc/redis.conf
+
+# Get password from options (if set)
 PASSWORD=$(jq --raw-output '.password // empty' $CONFIG_PATH)
 
-# Формирование конфигурации Redis
+# Generate Redis configuration
 if [ -n "$PASSWORD" ]; then
-  echo "requirepass $PASSWORD" > /etc/redis.conf
+  echo "requirepass $PASSWORD" > $REDIS_CONF
 else
-  echo "" > /etc/redis.conf
+  echo "" > $REDIS_CONF
 fi
 
-# Запуск Redis
-exec redis-server /etc/redis.conf
-
+# Start Redis server
+exec redis-server $REDIS_CONF
