@@ -6,11 +6,12 @@ jq --raw-output 'keys[] as $k | select(.[$k] != "" and .[$k] != null) | "\t" + (
 eval $(jq --raw-output 'keys[] as $k | select(.[$k] != "" and .[$k] != null) | "export " + ($k | ascii_upcase) + "=\"" + (.[$k]|tostring) + "\""' $CONFIG_PATH);
 
 export PRISMA_DATABASE_URL="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}"
-export BACKEND_CACHE_PROVIDER=redis
-export BACKEND_CACHE_REDIS_URI=redis://default:${REDIS_PASSWORD}@${REDIS_HOST}:${REDIS_PORT}/${REDIS_DB}
-
 echo $PRISMA_DATABASE_URL
-echo $BACKEND_CACHE_REDIS_URI
+if [$REDIS]; then
+    export BACKEND_CACHE_PROVIDER=redis
+    export BACKEND_CACHE_REDIS_URI=redis://default:${REDIS_PASSWORD}@${REDIS_HOST}:${REDIS_PORT}/${REDIS_DB}
+    echo $BACKEND_CACHE_REDIS_URI
+fi
 
 run_migration() {
     echo "Running database migration..."
