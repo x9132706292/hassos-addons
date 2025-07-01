@@ -13,6 +13,7 @@ url: "https://github.com/x9132706292/hassos-addons/"
 boot: "auto"
 ingress: true
 ingress_stream: true
+ingress_port: 3000
 panel_icon: mdi:cart
 panel_admin: false
 options:
