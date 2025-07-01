@@ -11,17 +11,13 @@ arch:
 startup: "application"
 url: "https://github.com/x9132706292/hassos-addons/"
 boot: "auto"
-ingress: true
-ingress_stream: true
-ingress_port: 3000
-panel_icon: mdi:cart
-panel_admin: false
 options:
   POSTGRES_HOST: "77b2833f-timescaledb"
   POSTGRES_PORT: 5432
   POSTGRES_DB: "teable"
   POSTGRES_USER: "teable"
   POSTGRES_PASSWORD: "teable"
+  REDIS: true
   REDIS_HOST: "2118a69b-redis"
   REDIS_PORT: 6379
   REDIS_DB: 0
@@ -33,6 +29,7 @@ schema:
   POSTGRES_DB: str
   POSTGRES_USER: str
   POSTGRES_PASSWORD: password
+  REDIS: bool
   REDIS_HOST: str
   REDIS_PORT: int(1,65534)
   REDIS_DB: int
@@ -40,4 +37,3 @@ schema:
   PUBLIC_ORIGIN: str
 ports:
   "3000/tcp": 3000
-webui: "http://[HOST]:[PORT:3000]"
