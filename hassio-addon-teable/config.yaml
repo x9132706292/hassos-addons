@@ -11,6 +11,10 @@ arch:
 startup: "application"
 url: "https://github.com/x9132706292/hassos-addons/"
 boot: "auto"
+ingress: true
+ingress_stream: true
+panel_icon: mdi:cart
+panel_admin: false
 options:
   POSTGRES_HOST: "77b2833f-timescaledb"
   POSTGRES_PORT: 5432
