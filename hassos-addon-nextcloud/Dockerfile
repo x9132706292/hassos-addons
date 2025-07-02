@@ -1,4 +1,4 @@
-FROM nexcloud
+FROM nextcloud
 
 # Устанавливаем утилиты
 RUN apt-get update && apt-get install -y \
