@@ -2,21 +2,49 @@ name: "Nextcloud"
 version: "31.0.0"
 slug: "nextcloud"
 description: "A safe home for all your data with Nextcloud"
-url: "https://github.com/x9132706292/hassos-addons/tree/main/hassos-addon-nextcloud"
+url: "https://github.com/x9132706292/hassos-addons/"
 arch:
   - amd64
   - armhf
   - armv7
   - aarch64
   - i386
+init: true
 startup: "application"
 boot: "auto"
+options: 
+  POSTGRES_HOST: "77b2833f-timescaledb"
+  POSTGRES_PORT: 5432
+  POSTGRES_DB: "nextcloud"
+  POSTGRES_USER: "nextcloud"
+  POSTGRES_PASSWORD: "nextcloud"
+  REDIS: true
+  REDIS_HOST: "2118a69b-redis"
+  REDIS_PORT: 6379
+  REDIS_DB: 0
+  REDIS_PASSWORD: "redis_password"
+  NEXTCLOUD_DATADIR: "share/nextcloud"
+schema:
+  POSTGRES_HOST: str
+  POSTGRES_PORT: int(1,65534)
+  POSTGRES_DB: str
+  POSTGRES_USER: str
+  POSTGRES_PASSWORD: password
+  REDIS: bool
+  REDIS_HOST: str
+  REDIS_PORT: int(1,65534)
+  REDIS_DB: int
+  REDIS_PASSWORD: password
+  NEXTCLOUD_DATADIR: str
 ports:
-  80/tcp: 8080
+  80/tcp: null
+  8080/tcp: 8080
+  8443/tcp: 8443
 ports_description:
   80/tcp: "Web interface for Nextcloud"
 map:
   - share:rw
+  - addon_config:rw
 webui: "http://[HOST]:[PORT:8080]"
 backup_exclude:
   - "*/logs"
