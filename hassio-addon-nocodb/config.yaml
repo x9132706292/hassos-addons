@@ -1,0 +1,32 @@
+name: "NocoDB"
+version: "0.263.8"
+slug: "nocodb"
+description: "NocoDB for Home Assistant"
+arch:
+  - aarch64
+  - amd64
+  - armhf
+  - armv7
+  - i386
+startup: "application"
+url: "https://github.com/x9132706292/hassos-addons/"
+boot: "auto"
+options:
+  POSTGRES_HOST: "77b2833f-timescaledb"
+  POSTGRES_PORT: 5432
+  POSTGRES_DB: "nocodb"
+  POSTGRES_USER: "nocodb"
+  POSTGRES_PASSWORD: "nocodb"
+  NC_PUBLIC_URL: "http://127.0.0.1:8080"
+schema:
+  POSTGRES_HOST: str
+  POSTGRES_PORT: int(1,65534)
+  POSTGRES_DB: str
+  POSTGRES_USER: str
+  POSTGRES_PASSWORD: password
+  NC_PUBLIC_URL: str
+ports:
+  "3080/tcp": 8080
+map:
+  - addon_config:rw
+  - data:rw
