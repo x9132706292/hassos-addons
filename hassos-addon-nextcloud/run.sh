@@ -20,4 +20,4 @@ fi
 
 echo 'Starting with the following configuration:';
 
-exec /run.sh
+exec /start.sh
