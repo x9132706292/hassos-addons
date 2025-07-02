@@ -39,3 +39,4 @@ ports:
   "3000/tcp": 3000
 map:
   - addon_config:rw
+  - data:rw
