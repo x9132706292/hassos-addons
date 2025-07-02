@@ -23,7 +23,7 @@ options:
   REDIS_PORT: 6379
   REDIS_DB: 0
   REDIS_PASSWORD: "redis_password"
-  NEXTCLOUD_DATADIR: "share/nextcloud"
+  NEXTCLOUD_DATADIR: "/share/nextcloud"
 schema:
   POSTGRES_HOST: str
   POSTGRES_PORT: int(1,65534)
