@@ -1,5 +1,4 @@
 #!/bin/sh
-set -eu
 
 CONFIG_PATH=/data/options.json
 echo 'Starting with the following configuration:';
