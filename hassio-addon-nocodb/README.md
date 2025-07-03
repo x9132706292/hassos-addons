@@ -1,4 +1,14 @@
 # NocoDB Home Assistant Add-on
+<h1 align="center" style="border-bottom: none">
+    <div>
+        <a style="color:#36f" href="https://www.nocodb.com">
+            <img src="/packages/nc-gui/assets/img/brand/nocodb-full.png" height="80" />
+            <br>
+    The Open Source Airtable Alternative 
+        </a>
+        <br>
+    </div>
+</h1>
 
 ## Description
 This repository provides a Home Assistant add-on for [NocoDB](https://www.nocodb.com/), an open-source Airtable alternative that transforms any database into a smart spreadsheet. The NocoDB add-on enables Home Assistant users to manage databases within their Home Assistant environment, offering a user-friendly interface for organizing and visualizing data.
