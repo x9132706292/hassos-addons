@@ -26,7 +26,7 @@ schema:
   POSTGRES_PASSWORD: password
   NC_PUBLIC_URL: str
 ports:
-  "3080/tcp": 8080
+  "8080/tcp": 8080
 map:
   - addon_config:rw
   - data:rw
