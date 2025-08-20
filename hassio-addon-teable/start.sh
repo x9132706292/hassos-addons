@@ -37,6 +37,5 @@ case "$1" in
         ;;
 esac
 
-node ./apps/nestjs-backend/dist/index.js &
-node ./plugins/server.js &
+scripts/start.sh
 wait -n
