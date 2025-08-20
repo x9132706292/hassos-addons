@@ -1,4 +1,4 @@
-FROM ghcr.io/teableio/teable:latest
+FROM ghcr.io/teableio/teable:0.2.0-alpha-1.8.0-build.263-amd64
 
 # Устанавливаем утилиты
 RUN apt-get update && apt-get install -y \
