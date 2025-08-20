@@ -14,4 +14,3 @@ if (($REDIS=="true")) then
 fi
 
 scripts/start.sh
-wait -n
