@@ -13,6 +13,4 @@ if (($REDIS=="true")) then
     echo $BACKEND_CACHE_REDIS_URI
 fi
 
-node ./apps/nestjs-backend/dist/index.js &
-node ./plugins/server.js &
-wait -n
+scripts/start.sh
