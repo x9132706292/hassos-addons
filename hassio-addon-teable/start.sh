@@ -13,8 +13,6 @@ if (($REDIS=="true")) then
     echo $BACKEND_CACHE_REDIS_URI
 fi
 
-#!/bin/bash
-
 run_migration() {
     echo "Running database migration..."
     cd /app && node scripts/db-migrate.mjs
