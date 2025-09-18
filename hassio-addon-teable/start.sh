@@ -13,6 +13,8 @@ if (($REDIS=="true")) then
     echo $BACKEND_CACHE_REDIS_URI
 fi
 
+#!/bin/bash
+
 run_migration() {
     echo "Running database migration..."
     cd /app && node scripts/db-migrate.mjs
@@ -87,6 +89,31 @@ case "$1" in
 esac
 
 check_and_start_redis
-node ./enterprise/backend-ee/dist/index.js &
-node ./community/plugins/server.js &
+
+should_start_sandbox() {
+    if [[ -n "${SANDBOX_URL}" ]]; then
+        echo "Using external sandbox service at: ${SANDBOX_URL}"
+        return 1
+    fi
+
+    return 0
+}
+
+start_sandbox() {
+    node ./enterprise/sandbox/dist/server.js &
+}
+
+start_main_app() {
+    node ./enterprise/backend-ee/dist/index.js &
+    node ./community/plugins/server.js &
+}
+
+if should_start_sandbox; then
+    start_sandbox
+else
+    echo "Skipping integrated sandbox startup"
+fi
+
+start_main_app
+
 wait -n
