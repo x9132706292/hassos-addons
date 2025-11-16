@@ -12,6 +12,6 @@ arch:
   - armv7
   - i386
 ports:
-  8080/tcp: 8080
+  80/tcp: 80
 ports_description:
-  8080/tcp: "Web server port"
+  80/tcp: "Web server port"
