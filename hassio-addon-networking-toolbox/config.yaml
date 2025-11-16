@@ -1,0 +1,17 @@
+name: "Networking Toolbox"
+version: "3.8"
+slug: "networking-toolbox"
+description: "Networking Toolbox server for Home Assistant"
+url: "https://github.com/x9132706292/hassos-addons/"
+startup: "services"
+boot: "auto"
+arch:
+  - aarch64
+  - amd64
+  - armhf
+  - armv7
+  - i386
+ports:
+  3000/tcp: 3000
+ports_description:
+  3000/tcp: "Web server port"
