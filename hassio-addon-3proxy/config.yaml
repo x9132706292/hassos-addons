@@ -1,0 +1,19 @@
+name: "3proxy"
+version: "2024.10.22-7ca5933"
+slug: "3proxy"
+description: "3proxy server for Home Assistant"
+url: "https://github.com/x9132706292/hassos-addons/"
+startup: "services"
+boot: "auto"
+arch:
+  - aarch64
+  - amd64
+  - armhf
+  - armv7
+  - i386
+ports:
+  3128/tcp: 3128
+  1080/udp: 1080
+ports_description:
+  3128/tcp: "HTTP/HTTPS proxy port"
+  1080/udo: "socks4/socks5 proxy port"
