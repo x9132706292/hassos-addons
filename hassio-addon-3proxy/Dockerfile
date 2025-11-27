@@ -1,1 +1,1 @@
-FROM 3proxy/3proxy
+FROM 3proxy/3proxy:latest
