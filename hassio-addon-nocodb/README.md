@@ -2,7 +2,7 @@
 <h1 align="center" style="border-bottom: none">
     <div>
         <a style="color:#36f" href="https://www.nocodb.com">
-            <img src="/logo.png" height="80" />
+            <img src="https://github.com/x9132706292/hassos-addons/blob/main/hassio-addon-nocodb/logo.png" height="80" />
             <br>
     The Open Source Airtable Alternative 
         </a>
