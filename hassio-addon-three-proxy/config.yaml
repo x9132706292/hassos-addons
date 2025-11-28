@@ -1,5 +1,5 @@
 name: "three-proxy"
-version: "2024.10.22-7ca5933"
+version: "1"
 slug: "three-proxy"
 description: "3proxy server for Home Assistant"
 url: "https://github.com/x9132706292/hassos-addons/"
