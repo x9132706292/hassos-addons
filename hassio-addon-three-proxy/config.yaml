@@ -16,4 +16,4 @@ ports:
   1080/udp: 1080
 ports_description:
   3128/tcp: "HTTP/HTTPS proxy port"
-  1080/udo: "socks4/socks5 proxy port"
+  1080/udp: "socks4/socks5 proxy port"
