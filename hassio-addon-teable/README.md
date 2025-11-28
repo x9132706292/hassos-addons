@@ -1,6 +1,6 @@
 # [Teable](https://teablr.io) Add-on for Home Assistant
 
-![Teable Logo](logo.png)
+![Teable Logo](https://raw.githubusercontent.com/x9132706292/hassos-addons/refs/heads/main/hassio-addon-teable/logo.png)
 
 The Teable Add-on for Home Assistant provides a powerful, spreadsheet-like database solution to manage and organize your smart home data efficiently. It allows users to create, customize, and query tables with a user-friendly interface, seamlessly integrating with Home Assistant for enhanced automation and data visualization.
 
