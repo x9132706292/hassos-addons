@@ -2,6 +2,7 @@ FROM ubuntu:latest
 
 RUN apt-get update && apt-get install -y \
     curl \
+    jq \
     && rm -rf /var/lib/apt/lists/*
 
 COPY ciadpi-x86_64 /usr/local/bin/ciadpi-x86_64
