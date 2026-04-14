@@ -8,5 +8,6 @@ set -e
 CONFIG_PATH=/data/options.json
 
 export PORT=$(jq --raw-output '.port // empty' $CONFIG_PATH)
+cat $CONFIG_PATH
 
-/usr/local/bin/ciadpi-x86_64 -p $PORT
+/usr/local/bin/ciadpi-x86_64 -p 999
