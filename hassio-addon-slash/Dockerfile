@@ -1,0 +1,1 @@
+FROM yourselfhosted/slash:latest
