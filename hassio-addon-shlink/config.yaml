@@ -12,21 +12,29 @@ startup: "application"
 url: "https://github.com/x9132706292/hassos-addons/"
 boot: "auto"
 options:
-  POSTGRES_HOST: "77b2833f-timescaledb"
-  POSTGRES_PORT: 5432
-  POSTGRES_DB: "shlink"
-  POSTGRES_USER: "shlink"
-  POSTGRES_PASSWORD: "shlink"
+  DB_DRIVER: "postgres"
+  DB_HOST: "77b2833f-timescaledb"
+  DB_PORT: 5432
+  DB_NAME: "shlink"
+  DB_USER: "shlink"
+  DB_PASSWORD: "shlink"
   DEFAULT_DOMAIN: "s.test"
   GEOLITE_LICENSE_KEY: "kjh23ljkbndskj345"
+  IS_HTTPS_ENABLED: false
 schema:
-  POSTGRES_HOST: str
-  POSTGRES_PORT: int(1,65534)
-  POSTGRES_DB: str
-  POSTGRES_USER: str
-  POSTGRES_PASSWORD: password
+  DB_DRIVER:
+    - mysql
+    - maria
+    - postgres
+    - mssql
+  DB_HOST: str
+  DB_PORT: int(1,65534)
+  DB_NAME: str
+  DB_USER: str
+  DB_PASSWORD: password
   DEFAULT_DOMAIN: str
   GEOLITE_LICENSE_KEY: str
+  IS_HTTPS_ENABLED: bool
 ports:
   "8080/tcp": 8080
 map:
