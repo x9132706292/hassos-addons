@@ -22,18 +22,14 @@ options:
   GEOLITE_LICENSE_KEY: "kjh23ljkbndskj345"
   IS_HTTPS_ENABLED: false
 schema:
-  DB_DRIVER:
-    - mysql
-    - maria
-    - postgres
-    - mssql
+  DB_DRIVER: list(mysql|maria|postgres|mssql)
   DB_HOST: str
   DB_PORT: int(1,65534)
   DB_NAME: str
   DB_USER: str
   DB_PASSWORD: password
   DEFAULT_DOMAIN: str
-  GEOLITE_LICENSE_KEY: str
+  GEOLITE_LICENSE_KEY: str?
   IS_HTTPS_ENABLED: bool
 ports:
   "8080/tcp": 8080
