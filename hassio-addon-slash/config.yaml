@@ -1,0 +1,18 @@
+name: "slash"
+version: "1.0.0"
+slug: "slash"
+description: "An open source, self-hosted platform for sharing and managing your most frequently used links. Easily create customizable, human-readable shortcuts to streamline your link management."
+arch:
+  - aarch64
+  - amd64
+  - armhf
+  - armv7
+  - i386
+startup: "application"
+url: "https://github.com/x9132706292/hassos-addons/"
+boot: "auto"
+ports:
+  "5231/tcp": 5231
+map:
+  - addon_config:rw
+  - data:rw
