@@ -1,0 +1,34 @@
+name: "shlink"
+version: "5"
+slug: "shlink"
+description: "The definitive self-hosted URL shortener"
+arch:
+  - aarch64
+  - amd64
+  - armhf
+  - armv7
+  - i386
+startup: "application"
+url: "https://github.com/x9132706292/hassos-addons/"
+boot: "auto"
+options:
+  POSTGRES_HOST: "77b2833f-timescaledb"
+  POSTGRES_PORT: 5432
+  POSTGRES_DB: "shlink"
+  POSTGRES_USER: "shlink"
+  POSTGRES_PASSWORD: "shlink"
+  DEFAULT_DOMAIN: "s.test"
+  GEOLITE_LICENSE_KEY: "kjh23ljkbndskj345"
+schema:
+  POSTGRES_HOST: str
+  POSTGRES_PORT: int(1,65534)
+  POSTGRES_DB: str
+  POSTGRES_USER: str
+  POSTGRES_PASSWORD: password
+  DEFAULT_DOMAIN: str
+  GEOLITE_LICENSE_KEY: str
+ports:
+  "8080/tcp": 8080
+map:
+  - addon_config:rw
+  - data:rw
