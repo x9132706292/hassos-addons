@@ -13,7 +13,7 @@ url: "https://github.com/x9132706292/hassos-addons/"
 boot: "auto"
 options:
   SLASH_DRIVER: "postgres"
-  SLASH_DSN: "postgresql://slash:password@77b2833f-timescaledb:5432/slash"
+  SLASH_DSN: "postgresql://slash:password@77b2833f-timescaledb:5432/slash?sslmode=disable"
 schema:
   SLASH_DRIVER: str
   SLASH_DSN: str
