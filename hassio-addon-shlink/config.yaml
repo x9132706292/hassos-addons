@@ -19,6 +19,7 @@ options:
   DB_USER: "shlink"
   DB_PASSWORD: "shlink"
   DEFAULT_DOMAIN: "s.test"
+  INITIAL_API_KEY: ""
   GEOLITE_LICENSE_KEY: "kjh23ljkbndskj345"
   IS_HTTPS_ENABLED: false
 schema:
@@ -29,6 +30,7 @@ schema:
   DB_USER: str
   DB_PASSWORD: password
   DEFAULT_DOMAIN: str
+  INITIAL_API_KEY: str?
   GEOLITE_LICENSE_KEY: str?
   IS_HTTPS_ENABLED: bool
 ports:
