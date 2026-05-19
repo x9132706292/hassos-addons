@@ -11,6 +11,12 @@ arch:
 startup: "application"
 url: "https://github.com/x9132706292/hassos-addons/"
 boot: "auto"
+options:
+  SLASH_DRIVER: "postgres"
+  SLASH_DSN: "postgresql://slash:password@77b2833f-timescaledb:5432/slash"
+schema:
+  SLASH_DRIVER: str
+  SLASH_DSN: str
 ports:
   "5231/tcp": 5231
 map:
