@@ -37,7 +37,6 @@ COPY --from=builder /build/source ./
 
 # Безопасность: запуск от non-root пользователя
 RUN chown -R node:node /app && \
-    apk del git && \
     npm cache clean --force && \
     rm -rf /tmp/* /var/cache/apk/*
 USER node
