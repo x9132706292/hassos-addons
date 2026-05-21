@@ -26,7 +26,7 @@ RUN npm ci --include=dev --omit=optional
 FROM node:20-alpine
 
 # Установка http-server и wget для healthcheck
-RUN npm config set registry https://registry.yarnpkg.com/ 
+RUN npm config set registry https://registry.npmmirror.com/ 
 RUN apk add --no-cache wget && \
     npm install -g http-server
 
