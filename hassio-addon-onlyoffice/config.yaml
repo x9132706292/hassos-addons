@@ -1,5 +1,39 @@
+name: "OnlyOffice Document Server"
+version: "1.0.0"
+slug: "onlyoffice_documentserver"
+description: "Collaborative office suite for editing documents, spreadsheets, and presentations. Integrates with Home Assistant file management."
+arch:
+  - aarch64
+  - amd64
+  - armhf
+  - armv7
+  - i386
+startup: "services"
+url: "https://github.com/x9132706292/hassos-addons/"
+boot: "auto"
+ports:
+  80/tcp: 8080      # Веб-интерфейс (внешний:8080 → внутренний:80)
+  443/tcp: 8443     # HTTPS (опционально)
+  8000/tcp: null    # Внутренний healthcheck, не мапим наружу
 
-
+# Маппинг томов Home Assistant [[14]]
 map:
-  - addon_config:rw
-  - data:rw
+  - type: addon_config
+    read_only: false
+    path: /config/onlyoffice
+  - type: share
+    read_only: false
+  - type: ssl
+    read_only: true
+
+# Опции для пользователя
+options:
+  jwt_secret: ""
+  storage_path: "/share/onlyoffice"
+  log_level: "info"
+
+schema:
+  jwt_secret: "str?"
+  storage_path: "str"
+  log_level: "list(info|debug|warn|error)"
+
