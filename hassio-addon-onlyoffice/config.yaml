@@ -37,3 +37,12 @@ schema:
   storage_path: "str"
   log_level: "list(info|debug|warn|error)"
 
+# Интеграция с Home Assistant API (опционально)
+hassio_api: true
+homeassistant_api: false
+
+# Ingress для доступа через HA UI (рекомендуется)
+ingress: true
+ingress_port: 80
+panel_icon: "mdi:file-document-edit"
+panel_title: "OnlyOffice"
