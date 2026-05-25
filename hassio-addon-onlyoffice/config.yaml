@@ -1,0 +1,5 @@
+
+
+map:
+  - addon_config:rw
+  - data:rw
