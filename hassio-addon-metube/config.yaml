@@ -1,5 +1,5 @@
 name: "MeTube"
-version: "2026.06.0"
+version: "2026.06.0.1"
 slug: metube
 description: >-
   Веб-интерфейс для скачивания видео с YouTube и других сайтов через yt-dlp
@@ -46,7 +46,7 @@ options:
   yt_dlp_args: ""
 
 schema:
-  download_dir: str
+  DOWNLOAD_DIR: str
   puid: int(0,)
   pgid: int(0,)
   max_concurrent_downloads: int(1,10)
