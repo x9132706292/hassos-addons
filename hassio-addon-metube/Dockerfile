@@ -27,6 +27,4 @@ EXPOSE 8081
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
   CMD curl -fsS "http://localhost:8081/" || exit 1
 
-# Entrypoint остаётся от оригинального образа
-# Он уже обрабатывает переменные окружения PUID/PGID
-ENTRYPOINT ["/usr/bin/tini", "-g", "--", "./docker-entrypoint.sh"]
+ENTRYPOINT ["/run.sh"]
