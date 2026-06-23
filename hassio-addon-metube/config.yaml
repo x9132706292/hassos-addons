@@ -39,7 +39,7 @@ map:
 
 # Опции конфигурации для пользователя
 options:
-  download_dir: "/share/downloads"
+  DOWNLOAD_DIR: "/share/downloads"
   puid: 1000
   pgid: 1000
   max_concurrent_downloads: 2
