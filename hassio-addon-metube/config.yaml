@@ -32,6 +32,7 @@ panel_title: "MeTube"
 map:
   - type: share
     read_only: false
+    path: /downloads
   - type: addon_config
     read_only: false
 
