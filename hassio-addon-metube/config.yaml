@@ -1,5 +1,5 @@
 name: "MeTube"
-version: "2026.06.0.1"
+version: "2026.06.0"
 slug: metube
 description: >-
   Веб-интерфейс для скачивания видео с YouTube и других сайтов через yt-dlp
