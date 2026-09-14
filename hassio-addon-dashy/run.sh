@@ -7,7 +7,7 @@ mkdir -p /data
 # 2. Если файла конфигурации еще нет, копируем стандартный из образа Dashy
 if [ ! -f /data/conf.yml ]; then
     cp /app/user-data/conf.yml /data/conf.yml
-    chown 1000:1000 /data/conf.yml
+    chown -R 1000:1000 /data
 fi
 
 # 3. Подменяем стандартную папку на символическую ссылку на /data
