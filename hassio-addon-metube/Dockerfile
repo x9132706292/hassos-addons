@@ -1,11 +1,11 @@
 # Используем официальный образ MeTube как базовый
 # Важно: нужно адаптировать под требования Home Assistant
 
-FROM ghcr.io/alexta69/metube:latest
+FROM ghcr.io/alexta69/metube:2026.08.28
 
 # Метки для Home Assistant Supervisor
 LABEL \
-  io.hass.version="2026.06.0" \
+  io.hass.version="2026.08.28" \
   io.hass.type="app" \
   io.hass.arch="amd64|aarch64|armv7"
 
