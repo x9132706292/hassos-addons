@@ -2,7 +2,7 @@ name: "Web check"
 version: "2.2.4"
 slug: "web-check"
 description: " All-in-one OSINT tool for analysing any website"
-url: "https://github.com/x9132706292/hassos-addons/"
+url: "https://github.com/lissy93/web-check"
 startup: "services"
 boot: "auto"
 arch:
