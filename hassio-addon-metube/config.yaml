@@ -20,14 +20,6 @@ ports_description:
 startup: application
 boot: auto
 
-# Web UI для доступа через Ingress или напрямую
-webui: "http://[HOST]:[PORT:8081]/"
-ingress: true
-ingress_port: 8081
-ingress_entry: "/"
-panel_icon: "mdi:youtube"
-panel_title: "MeTube"
-
 # Маппинг директорий
 map:
   - type: share
