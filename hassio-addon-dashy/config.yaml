@@ -1,0 +1,17 @@
+name: "Dashy"
+version: "4.6.14"
+slug: "dashy"
+description: " All-in-one OSINT tool for analysing any website"
+url: "https://github.com/lissy93/dashy"
+startup: "services"
+boot: "auto"
+arch:
+  - aarch64
+  - amd64
+  - armhf
+  - armv7
+  - i386
+ports:
+  4000/tcp: 8080
+ports_description:
+  4000/tcp: "Web server port"
