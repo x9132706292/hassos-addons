@@ -45,3 +45,4 @@ schema:
       socks_bind_address: str?
 
       auto_reconnect: bool?
+host_network: true      
