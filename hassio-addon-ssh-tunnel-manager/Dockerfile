@@ -1,16 +1,13 @@
-ARG BUILD_FROM
-FROM $BUILD_FROM
+FROM alpine:3.20
 
 RUN apk add --no-cache \
     openssh-client \
     sshpass \
-    bash \
-    python3 \
-    jq
+    python3
 
-COPY run.sh /
-COPY tunnels_manager.py /
+COPY run.sh /run.sh
+COPY tunnels_manager.py /tunnels_manager.py
 
-RUN chmod a+x /run.sh
+RUN chmod +x /run.sh
 
 CMD ["/run.sh"]
