@@ -1,0 +1,27 @@
+name: SSH Tunnel Manager
+version: "1.1.0"
+slug: ssh-tunnel-manager
+description: Управление множественными SSH туннелями с поддержкой аутентификации по паролю и ключу
+url: https://github.com/x9132706292/hassos-addons/
+arch:
+- amd64
+- aarch64
+- armv7
+startup: application
+boot: auto
+options:
+tunnels: []
+schema:
+tunnels:
+- name: str
+host: str
+port: int(1,65535)
+user: str
+auth_type: list(password|key)
+password: password?
+private_key: str?
+key_passphrase: password?
+local_port: int(1,65535)
+remote_host: str
+remote_port: int(1,65535)
+auto_reconnect: bool
