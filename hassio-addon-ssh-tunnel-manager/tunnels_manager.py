@@ -19,17 +19,18 @@ import os
 import signal
 import subprocess
 import sys
+import threading
 import time
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
+OPTIONS_PATH = Path("/data/options.json")
 KEYS_DIR = Path("/data/ssh_keys")
 
 ALLOWED_FORWARD_TYPES = {"local", "dynamic"}
 ALLOWED_AUTH_TYPES = {"password", "key"}
 
-# Регулярка для sshpass.
-# Лучше использовать простой POSIX-совместимый шаблон без inline flags.
+# Регулярка для sshpass: ловим и password, и passphrase prompts.
 SSHPASS_PROMPT_RE = r"[Pp]assword|[Pp]assphrase"
 
 
@@ -41,12 +42,72 @@ class ConfigError(ValueError):
     """Ошибка конфигурации аддона."""
 
 
+def load_tunnels_json() -> str:
+    """
+    Загружает список tunnels.
+
+    Приоритет:
+    1. JSON-аргумент командной строки, если он передан.
+    2. /data/options.json, как в Home Assistant add-on.
+    """
+
+    if len(sys.argv) > 1:
+        arg = sys.argv[1].strip()
+        if arg.startswith("[") or arg.startswith("{"):
+            try:
+                data = json.loads(arg)
+            except json.JSONDecodeError as exc:
+                raise ConfigError(f"Некорректный JSON из argv: {exc}") from exc
+
+            if isinstance(data, dict):
+                tunnels = data.get("tunnels")
+            elif isinstance(data, list):
+                tunnels = data
+            else:
+                raise ConfigError("Ожидался список tunnels или объект с полем tunnels")
+
+            if tunnels is None:
+                tunnels = []
+
+            if not isinstance(tunnels, list):
+                raise ConfigError("Поле tunnels должно быть списком")
+
+            return json.dumps(tunnels)
+
+    if not OPTIONS_PATH.exists():
+        log(f"Файл конфигурации {OPTIONS_PATH} не найден. Запускаюсь без туннелей.")
+        return "[]"
+
+    try:
+        raw = OPTIONS_PATH.read_text(encoding="utf-8")
+        data = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        raise ConfigError(f"Некорректный JSON в {OPTIONS_PATH}: {exc}") from exc
+    except OSError as exc:
+        raise ConfigError(f"Не удалось прочитать {OPTIONS_PATH}: {exc}") from exc
+
+    if isinstance(data, dict):
+        tunnels = data.get("tunnels")
+    elif isinstance(data, list):
+        tunnels = data
+    else:
+        raise ConfigError("Ожидался объект с полем tunnels или список tunnels")
+
+    if tunnels is None:
+        tunnels = []
+
+    if not isinstance(tunnels, list):
+        raise ConfigError("Поле tunnels должно быть списком")
+
+    return json.dumps(tunnels)
+
+
 class SSHTunnelManager:
     def __init__(self, config_json: str):
         try:
             parsed = json.loads(config_json)
         except json.JSONDecodeError as exc:
-            raise ConfigError(f"Некорректный JSON конфигурации: {exc}") from exc
+            raise ConfigError(f"Некорректный JSON конфигурации tunnels: {exc}") from exc
 
         if not isinstance(parsed, list):
             raise ConfigError("Ожидается список tunnels")
@@ -92,9 +153,17 @@ class SSHTunnelManager:
         return ivalue
 
     def _normalize_forward_types(self, tunnel: dict[str, Any]) -> list[str]:
+        """
+        Нормализует forward_type.
+
+        Поддерживает:
+        - отсутствие поля => local;
+        - строку => [строка];
+        - список значений.
+        """
+
         raw = tunnel.get("forward_type")
 
-        # Для обратной совместимости: если поле не заполнено, считаем local.
         if raw is None or raw == "":
             return ["local"]
 
@@ -102,13 +171,14 @@ class SSHTunnelManager:
             raw = [raw]
 
         if not isinstance(raw, list):
-            raise ConfigError(
-                "forward_type должен быть списком: local и/или dynamic"
-            )
+            raise ConfigError("forward_type должен быть списком: local и/или dynamic")
 
         result: list[str] = []
 
         for item in raw:
+            if item is None:
+                continue
+
             value = str(item).strip().lower()
             if not value:
                 continue
@@ -125,6 +195,10 @@ class SSHTunnelManager:
         return result or ["local"]
 
     def _prepare_tunnel(self, tunnel: dict[str, Any]) -> dict[str, Any]:
+        """
+        Валидирует и нормализует один туннель.
+        """
+
         name = self._as_str(tunnel.get("name")).strip()
         if not name:
             raise ConfigError("Поле name обязательно")
@@ -226,27 +300,28 @@ class SSHTunnelManager:
 
         return prepared
 
-    def _port_keys(self, prepared: dict[str, Any]) -> list[tuple[str, str, int]]:
+    @staticmethod
+    def _port_numbers(prepared: dict[str, Any]) -> list[int]:
         """
-        Возвращает список занятых портов в виде:
-        (type, bind_address, port)
+        Возвращает список локальных портов, которые займёт туннель.
         """
-        keys: list[tuple[str, str, int]] = []
+
+        ports: list[int] = []
 
         if "local" in prepared["forward_types"]:
-            keys.append(("local", "", prepared["local_port"]))
+            ports.append(prepared["local_port"])
 
         if "dynamic" in prepared["forward_types"]:
-            bind = prepared.get("socks_bind_address", "")
-            keys.append(("dynamic", bind, prepared["socks_port"]))
+            ports.append(prepared["socks_port"])
 
-        return keys
+        return ports
 
-    def _write_key_file(self, prepared: dict[str, Any]) -> str | None:
+    def _write_key_file(self, prepared: dict[str, Any]) -> Optional[str]:
         """
         Записывает приватный ключ из конфигурации в файл с правами 600.
         Возвращает путь к файлу.
         """
+
         raw_key = prepared.get("private_key", "")
         if not raw_key or not raw_key.strip():
             return None
@@ -273,6 +348,9 @@ class SSHTunnelManager:
             prepared["name"].encode("utf-8")
         ).hexdigest()[:8]
 
+        KEYS_DIR.mkdir(parents=True, exist_ok=True)
+        KEYS_DIR.chmod(0o700)
+
         key_path = KEYS_DIR / f"{safe_name}_{digest}_id"
 
         key_path.write_text(key_text, encoding="utf-8")
@@ -281,7 +359,8 @@ class SSHTunnelManager:
         log(f"[{prepared['name']}] Приватный ключ записан в {key_path}")
         return str(key_path)
 
-    def _socks_spec(self, prepared: dict[str, Any]) -> str:
+    @staticmethod
+    def _socks_spec(prepared: dict[str, Any]) -> str:
         """
         Формирует аргумент для ssh -D.
 
@@ -291,6 +370,7 @@ class SSHTunnelManager:
           0.0.0.0:1080
           [::1]:1080
         """
+
         port = prepared["socks_port"]
         bind = prepared.get("socks_bind_address", "").strip()
 
@@ -309,13 +389,14 @@ class SSHTunnelManager:
     def _build_ssh_command(
         self,
         prepared: dict[str, Any],
-        key_file: str | None,
+        key_file: Optional[str],
     ) -> list[str]:
         """
         Собирает команду SSH.
 
         Важно: все опции ssh должны идти до destination user@host.
         """
+
         base = [
             "ssh",
             "-N",
@@ -405,6 +486,7 @@ class SSHTunnelManager:
 
         Маскируется только пароль sshpass, не порт ssh -p.
         """
+
         masked = list(cmd)
 
         if masked and masked[0] == "sshpass":
@@ -416,6 +498,25 @@ class SSHTunnelManager:
                     break
 
         return masked
+
+    @staticmethod
+    def _drain_stderr(name: str, stream: Any) -> None:
+        """
+        Читает stderr процесса в отдельном потоке, чтобы pipe не переполнился.
+        """
+
+        try:
+            for line in iter(stream.readline, b""):
+                text = line.decode(errors="replace").rstrip()
+                if text:
+                    log(f"[{name}] {text}")
+        except Exception:
+            pass
+        finally:
+            try:
+                stream.close()
+            except Exception:
+                pass
 
     # ------------------------------------------------------------------ #
     #  Lifecycle
@@ -431,10 +532,16 @@ class SSHTunnelManager:
 
         process = subprocess.Popen(
             cmd,
-            stdout=subprocess.PIPE,
+            stdout=subprocess.DEVNULL,
             stderr=subprocess.PIPE,
             start_new_session=True,
         )
+
+        threading.Thread(
+            target=self._drain_stderr,
+            args=(name, process.stderr),
+            daemon=True,
+        ).start()
 
         self.processes[name] = {
             "process": process,
@@ -448,24 +555,28 @@ class SSHTunnelManager:
         KEYS_DIR.mkdir(parents=True, exist_ok=True)
         KEYS_DIR.chmod(0o700)
 
-        prepared_items: list[dict[str, Any]] = []
-        used_ports: dict[tuple[str, str, int], str] = {}
+        prepared_items = []
+        used_ports = set()
+        seen_names = set()
 
-        # Первый проход: валидация и проверка конфликтов портов.
+        # Первый проход: валидация и проверка конфликтов.
         for raw_tunnel in self.tunnels:
             try:
                 prepared = self._prepare_tunnel(raw_tunnel)
 
-                for port_key in self._port_keys(prepared):
-                    if port_key in used_ports:
-                        port_type, bind, port = port_key
-                        bind_display = bind or "default/localhost"
+                if prepared["name"] in seen_names:
+                    raise ConfigError(
+                        f"Дублирующееся имя туннеля: {prepared['name']}"
+                    )
+                seen_names.add(prepared["name"])
+
+                for port in self._port_numbers(prepared):
+                    if port in used_ports:
                         raise ConfigError(
-                            f"Конфликт портов: {port_type} "
-                            f"{bind_display}:{port} уже используется "
-                            f"туннелем '{used_ports[port_key]}'"
+                            f"[{prepared['name']}] Конфликт портов: "
+                            f"локальный порт {port} уже используется другим туннелем"
                         )
-                    used_ports[port_key] = prepared["name"]
+                    used_ports.add(port)
 
                 prepared_items.append(prepared)
 
@@ -489,25 +600,17 @@ class SSHTunnelManager:
         """
         Бесконечный цикл мониторинга и автопереподключения.
         """
+
         while True:
             for name, data in list(self.processes.items()):
                 process = data["process"]
                 prepared = data["prepared"]
 
                 if process.poll() is not None:
-                    stderr = ""
-                    try:
-                        stderr = process.stderr.read().decode(errors="replace").strip()
-                    except Exception:
-                        pass
-
                     log(
                         f"[{name}] Процесс завершился "
                         f"(код {process.returncode})"
                     )
-
-                    if stderr:
-                        log(f"[{name}] stderr: {stderr}")
 
                     if prepared.get("auto_reconnect", True):
                         log(f"[{name}] Переподключение через 5 с ...")
@@ -524,7 +627,7 @@ class SSHTunnelManager:
             time.sleep(10)
 
     def stop_all(self) -> None:
-        for name, data in self.processes.items():
+        for name, data in list(self.processes.items()):
             process = data["process"]
             log(f"[{name}] Остановка ...")
 
@@ -534,7 +637,7 @@ class SSHTunnelManager:
             except ProcessLookupError:
                 pass
             except Exception as exc:
-                log(f"[{name}] Оправка SIGTERM: {exc}")
+                log(f"[{name}] Ошибка отправки SIGTERM: {exc}")
 
             try:
                 process.wait(timeout=5)
@@ -552,12 +655,9 @@ class SSHTunnelManager:
 # ====================================================================== #
 
 def main() -> int:
-    if len(sys.argv) < 2:
-        log("Использование: tunnels_manager.py '<json_config>'")
-        return 1
-
     try:
-        manager = SSHTunnelManager(sys.argv[1])
+        config_json = load_tunnels_json()
+        manager = SSHTunnelManager(config_json)
     except ConfigError as exc:
         log(f"Фатальная ошибка конфигурации: {exc}")
         return 1
