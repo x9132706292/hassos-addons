@@ -1,17 +1,18 @@
 name: SSH Tunnel Manager
-version: "1.0.0"
+version: "1.0.1"
 slug: ssh-tunnel-manager
 description: Управление SSH туннелями с local и dynamic/SOCKS пробросом портов
 url: https://github.com/x9132706292/hassos-addons/
+
 arch:
   - amd64
   - aarch64
   - armv7
+
 startup: application
 boot: auto
 
-# Раскомментируйте, если SOCKS-прокси должен быть доступен из Home Assistant / host network.
-# Будьте осторожны: host_network увеличивает поверхность атаки.
+# Раскомментируйте, если SOCKS/local порты должны быть доступны с хоста.
 # host_network: true
 
 options:
@@ -34,12 +35,12 @@ schema:
       # dynamic = ssh -D, SOCKS proxy
       forward_type: list(local|dynamic)?
 
-      # Для local forwarding
+      # Для local forwarding: ssh -L local_port:remote_host:remote_port
       local_port: int(1,65535)?
       remote_host: str?
       remote_port: int(1,65535)?
 
-      # Для dynamic/SOCKS forwarding
+      # Для dynamic forwarding: ssh -D [bind_address:]socks_port
       socks_port: int(1,65535)?
       socks_bind_address: str?
 
