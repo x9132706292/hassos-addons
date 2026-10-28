@@ -1,5 +1,5 @@
 name: "Networking Toolbox"
-version: "3.8"
+version: "1.6.0"
 slug: "networking-toolbox"
 description: "Networking Toolbox server for Home Assistant"
 url: "https://github.com/x9132706292/hassos-addons/"
