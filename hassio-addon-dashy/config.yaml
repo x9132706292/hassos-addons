@@ -1,5 +1,5 @@
 name: "Dashy"
-version: "4.6.14"
+version: "4.9.0"
 slug: "dashy"
 description: "A self-hostable personal dashboard built for you. Includes status-checking, widgets, themes, icon packs, a UI editor and tons more!"
 url: "https://github.com/lissy93/dashy"
