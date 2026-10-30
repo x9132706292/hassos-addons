@@ -15,7 +15,7 @@ fi
 
 run_migration() {
     echo "Running database migration..."
-    cd /app && node scripts/db-migrate.mjs
+    cd "${APP_ROOT:-/app}" && node scripts/db-migrate.mjs
     local migration_status=$?
     if [ $migration_status -ne 0 ]; then
         echo "Database migration failed"
@@ -46,8 +46,8 @@ check_and_start_redis() {
     fi
 
     echo "Starting internal Redis..."
-    mkdir -p /var/log /redis-data
-    local redis_cmd="redis-server --port $port --bind "$internal_host" --dir /redis-data --appendonly yes"
+    mkdir -p /var/log /data/redis-data
+    local redis_cmd="redis-server --port $port --bind "$internal_host" --dir /data/redis-data --appendonly yes"
     if [[ -n "$password" ]]; then
         redis_cmd="$redis_cmd --requirepass $password"
     fi
@@ -62,6 +62,9 @@ check_and_start_redis() {
     while [ $attempt -le $max_attempts ]; do
         if check_redis_available "$internal_host" "$port" "$password"; then
             echo "✓ Internal Redis started successfully (took ${attempt} attempts)"
+            # Hand the internal Redis credentials to the app processes started below, so the
+            # backend never has to carry a fallback connection string with a password in code.
+            export BACKEND_CACHE_REDIS_URI="redis://default:${password}@${internal_host}:${port}/0"
             return 0
         fi
 
