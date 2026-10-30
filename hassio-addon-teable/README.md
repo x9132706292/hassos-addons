@@ -1,4 +1,4 @@
-# [Teable](https://teablr.io) Add-on for Home Assistant
+# [Teable](https://teable.io) Add-on for Home Assistant
 
 ![Teable Logo](https://raw.githubusercontent.com/x9132706292/hassos-addons/refs/heads/main/hassio-addon-teable/logo.png)
 
